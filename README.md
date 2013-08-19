@@ -92,4 +92,4 @@ Here is the Backus-Naur Form (BNF) of the syntax:
 
 [the golang string literal specification](http://golang.org/ref/spec#String_literals)
 
-### See you in space cowboy.
+See you space cowboy.
