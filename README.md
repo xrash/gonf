@@ -92,4 +92,10 @@ Here is the Backus-Naur Form (BNF) of the syntax:
 
 [the golang string literal specification](http://golang.org/ref/spec#String_literals)
 
+## TODO
+ - Detect syntax errors and generate nice error messages
+ - Add support to arrays in the Map() call
+ - Write a real spec
+ - Think about the possibility of extending the format to support including external files (something like @include)
+
 See you space cowboy.
