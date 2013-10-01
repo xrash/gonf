@@ -1,7 +1,7 @@
 package gonf
 
 func isBlank(r rune) bool {
-	return r == ' ' || isLineBreak(r)
+	return r == ' ' || r == '\t' || isLineBreak(r)
 }
 
 func isLineBreak(r rune) bool {
