@@ -15,6 +15,20 @@ const (
 
 testinteger 22
 
+damn [
+    {
+        one 1
+        two 2
+    }
+    {
+        one 10
+        two 20
+    }
+    [
+        42
+    ]
+]
+
 awesome [
     arrays
     "like this"
@@ -102,6 +116,9 @@ func testString(t *testing.T) {
 	likethis, _ := config.String("awesome", 1)
 	wololo, _ := config.String("keys are any string literal")
 	testinteger, _ := config.Int("testinteger")
+	damn0one, _ := config.Int("damn", 0, "one")
+	damn1two, _ := config.Int("damn", 1, "two")
+	damn20, _ := config.Int("damn", 2, 0)
 
 	stringtests := map[string]string{
 		username: "www-data",
@@ -118,6 +135,9 @@ func testString(t *testing.T) {
 
 	inttests := map[int]int{
 		testinteger: 22,
+		damn0one: 1,
+		damn1two: 20,
+		damn20: 42,
 	}
 
 	for i, v := range stringtests {

@@ -12,7 +12,7 @@ type Config struct {
 	value string
 	parent *Config
 	map_ map[string]*Config
-	array []*Config
+	array map[int]*Config
 }
 
 func Read(r io.Reader) (*Config, error) {

@@ -17,7 +17,6 @@ func (p *parser) parse() (*Config, error) {
 	var cfg *Config
 	cfg = new(Config)
 	cfg.map_ = make(map[string]*Config)
-	var i int
 
 	for {
 		select {
@@ -27,25 +26,36 @@ func (p *parser) parse() (*Config, error) {
 				key = t.value
 			case t_VALUE:
 				if cfg.map_ == nil {
-					cfg.array[i] = &Config{value:t.value}
-					i++
+					cfg.array[len(cfg.array)] = &Config{value:t.value}
 				} else {
-					cfg.map_[key] = new(Config)
-					cfg.map_[key].value = t.value
+					cfg.map_[key] = &Config{value: t.value}
 				}
 			case t_MAP_START:
-				cfg.map_[key] = new(Config)
-				cfg.map_[key].parent = cfg
-				cfg = cfg.map_[key]
-				cfg.map_ = make(map[string]*Config)
+				if cfg.map_ == nil {
+					cfg.array[len(cfg.array)] = new(Config)
+					cfg.array[len(cfg.array)-1].parent = cfg
+					cfg = cfg.array[len(cfg.array)-1]
+					cfg.map_ = make(map[string]*Config)
+				} else {
+					cfg.map_[key] = new(Config)
+					cfg.map_[key].parent = cfg
+					cfg = cfg.map_[key]
+					cfg.map_ = make(map[string]*Config)
+				}
 			case t_MAP_END:
 				cfg = cfg.parent
 			case t_ARRAY_START:
-				i = 0
-				cfg.map_[key] = new(Config)
-				cfg.map_[key].parent = cfg
-				cfg = cfg.map_[key]
-				cfg.array = make([]*Config, 255)
+				if cfg.map_ == nil {
+					cfg.array[len(cfg.array)] = new(Config)
+					cfg.array[len(cfg.array)-1].parent = cfg
+					cfg = cfg.array[len(cfg.array)-1]
+					cfg.array = make(map[int]*Config)
+				} else {
+					cfg.map_[key] = new(Config)
+					cfg.map_[key].parent = cfg
+					cfg = cfg.map_[key]
+					cfg.array = make(map[int]*Config)
+				}
 			case t_ARRAY_END:
 				cfg = cfg.parent
 			case t_EOF:
