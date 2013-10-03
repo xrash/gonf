@@ -15,6 +15,17 @@ const (
 
 testinteger 22
 
+anarraywithmaps [
+    {
+        name first
+        command second
+    }
+    {
+        name third
+        command fourth
+    }
+]
+
 damn [
     {
         one 1
@@ -57,6 +68,10 @@ database {
 )
 
 type teststruct struct {
+	AnArrayWithMaps []struct {
+		Name string `gonf:"name"`
+		Command string `gonf:"command"`
+	} `gonf:"anarraywithmaps"`
 	Username string `gonf:"username"`
 	Group string `gonf:"group"`
 	Database struct {
@@ -159,6 +174,8 @@ func testMap(t *testing.T) {
 	config.Map(s)
 
 	stringtests := map[string]string{
+		s.AnArrayWithMaps[0].Name: "first",
+		s.AnArrayWithMaps[1].Command: "fourth",
 		s.Username: "www-data",
 		s.Group: "www-data",
 		s.Database.Host: "127.0.0.1",

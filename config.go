@@ -28,6 +28,14 @@ func Read(r io.Reader) (*Config, error) {
 	return p.parse()
 }
 
+func (c *Config) Length() int {
+	if c.map_ == nil {
+		return len(c.array)
+	} else {
+		return len(c.map_)
+	}
+}
+
 func (c *Config) String(args ...interface{}) (string, error) {
 	c, err := c.Get(args...)
 	return c.value, err
@@ -79,25 +87,36 @@ func (c *Config) Map(s interface{}) error {
 }
 
 func (c *Config) rmap(t reflect.Type, v reflect.Value) {
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-
-		if tag := field.Tag.Get("gonf"); tag != "" {
-			f := v.FieldByName(field.Name)
-			switch field.Type.Kind() {
-			case reflect.String:
-				if value, err := c.String(tag); err == nil {
-					f.SetString(value)
-				}
-			case reflect.Int:
-				if value, err := c.Int(tag); err == nil {
-					f.SetInt(int64(value))
-				}
-			case reflect.Struct:
-				if c, err := c.Get(tag); err == nil {
-					c.rmap(f.Type(), f)
+	if t.Kind() == reflect.Struct {
+		for i := 0; i < t.NumField(); i++ {
+			field := t.Field(i)
+			if tag := field.Tag.Get("gonf"); tag != "" {
+				f := v.FieldByName(field.Name)
+				switch field.Type.Kind() {
+				case reflect.String:
+					if value, err := c.String(tag); err == nil {
+						f.SetString(value)
+					}
+				case reflect.Int:
+					if value, err := c.Int(tag); err == nil {
+						f.SetInt(int64(value))
+					}
+				case reflect.Struct:
+					if c, err := c.Get(tag); err == nil {
+						c.rmap(f.Type(), f)
+					}
+				case reflect.Slice:
+					if c, err := c.Get(tag); err == nil {
+						c.rmap(f.Type(), f)
+					}
 				}
 			}
+		}
+	} else if t.Kind() == reflect.Slice {
+		v.Set(reflect.MakeSlice(v.Type(), c.Length(), c.Length()))
+		for i := 0; i < v.Len(); i++ {
+			c, _ := c.Get(i)
+			c.rmap(v.Index(i).Type(), v.Index(i))
 		}
 	}
 }
