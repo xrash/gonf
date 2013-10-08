@@ -38,7 +38,10 @@ func (c *Config) Length() int {
 
 func (c *Config) String(args ...interface{}) (string, error) {
 	c, err := c.Get(args...)
-	return c.value, err
+	if err != nil {
+		return "", err
+	}
+	return c.value, nil
 }
 
 func (c *Config) Int(args ...interface{}) (int, error) {

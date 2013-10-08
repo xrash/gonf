@@ -82,6 +82,7 @@ type teststruct struct {
 		} `gonf:"auth"`
 	} `gonf:"database"`
 	TestInteger int `gonf:"testinteger"`
+	DoNotExists string `gonf:"donotexists"`
 }
 
 var file *os.File
@@ -134,6 +135,7 @@ func testString(t *testing.T) {
 	damn0one, _ := config.Int("damn", 0, "one")
 	damn1two, _ := config.Int("damn", 1, "two")
 	damn20, _ := config.Int("damn", 2, 0)
+	donotexists, _ := config.String("donotexists")
 
 	stringtests := map[string]string{
 		username: "www-data",
@@ -146,6 +148,7 @@ func testString(t *testing.T) {
 		arrays: "arrays",
 		likethis: "like this",
 		wololo: "just as values",
+		donotexists: "",
 	}
 
 	inttests := map[int]int{
