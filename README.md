@@ -93,8 +93,7 @@ Here is the Backus-Naur Form (BNF) of the syntax:
 [the golang string literal specification](http://golang.org/ref/spec#String_literals)
 
 ## TODO
+ - BUG: The last character of the file is being eaten by the lexer :(
  - Detect syntax errors and generate nice error messages
  - Write a real spec
  - Think about the possibility of extending the format to support including external files (something like @include)
-
-See you space cowboy.
