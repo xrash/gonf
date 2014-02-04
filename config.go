@@ -9,8 +9,8 @@ import (
 )
 
 type Config struct {
-	value string
 	parent *Config
+	value string
 	map_ map[string]*Config
 	array map[int]*Config
 }
@@ -34,6 +34,34 @@ func (c *Config) Length() int {
 	} else {
 		return len(c.map_)
 	}
+}
+
+func (c *Config) IsMap() bool {
+	return c.map_ != nil;
+}
+
+func (c *Config) IsArray() bool {
+	return c.array != nil;
+}
+
+func (c *Config) Parent() *Config {
+	return c.parent
+}
+
+func (c *Config) TraverseMap(visit func(string, *Config)) {
+	for key, value := range(c.map_) {
+		visit(key, value)
+	}
+}
+
+func (c *Config) TraverseArray(visit func(int, *Config)) {
+	for key, value := range(c.array) {
+		visit(key, value)
+	}
+}
+
+func (c *Config) Value() string {
+	return c.value
 }
 
 func (c *Config) String(args ...interface{}) (string, error) {

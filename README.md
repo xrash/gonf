@@ -79,7 +79,7 @@ NOTE: The struct fields have to be exported so the Map function can see them thr
 
 You are encouraged to see the working examples of tests/gonf_test.go.
 
-Here is the Backus-Naur Form (BNF) of the syntax:
+Here is the grammar:
 
     gonf ::= pair
     pair ::= key value | key value pair
