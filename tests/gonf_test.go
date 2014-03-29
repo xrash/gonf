@@ -1,10 +1,9 @@
 package tests
 
 import (
-	"testing"
-	"os"
-	"io/ioutil"
 	"fmt"
+	"strings"
+	"testing"
 	"github.com/xrash/gonf"
 )
 
@@ -85,35 +84,12 @@ type teststruct struct {
 	DoNotExists string `gonf:"donotexists"`
 }
 
-var file *os.File
 var config *gonf.Config
 
-func createTempFile(t *testing.T) {
+func readConfig(t *testing.T) {
 	var err error
-	file, err = ioutil.TempFile(os.TempDir(), "__gonf_test_")
-	if err != nil {
-		t.FailNow()
-	}
 
-	if n, err := file.WriteString(teststring); err != nil || n != len(teststring) {
-		t.FailNow()
-	}
-
-	file.Seek(0, 0)
-}
-
-func deleteTempFile(t *testing.T) {
-	if err := file.Close(); err != nil {
-		t.FailNow()
-	}
-	if err := os.Remove(file.Name()); err != nil {
-		t.FailNow()
-	}
-}
-
-func readTempFile(t *testing.T) {
-	var err error
-	config, err = gonf.Read(file)
+	config, err = gonf.Read(strings.NewReader(teststring))
 	if err != nil {
 		fmt.Println(err)
 		t.FailNow()
@@ -203,10 +179,7 @@ func testMap(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	createTempFile(t)
-	defer deleteTempFile(t)
-	readTempFile(t)
-
+	readConfig(t)
 	testString(t)
 	testMap(t)
 }
