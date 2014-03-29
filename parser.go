@@ -22,15 +22,15 @@ func (p *parser) parse() (*Config, error) {
 		select {
 		case t := <-p.tokens:
 			switch t.tokenType {
-			case t_KEY:
+			case T_KEY:
 				key = t.value
-			case t_VALUE:
+			case T_VALUE:
 				if cfg.table == nil {
 					cfg.array[len(cfg.array)] = &Config{value:t.value}
 				} else {
 					cfg.table[key] = &Config{value: t.value}
 				}
-			case t_TABLE_START:
+			case T_TABLE_START:
 				if cfg.table == nil {
 					cfg.array[len(cfg.array)] = new(Config)
 					cfg.array[len(cfg.array)-1].parent = cfg
@@ -42,9 +42,9 @@ func (p *parser) parse() (*Config, error) {
 					cfg = cfg.table[key]
 					cfg.table = make(map[string]*Config)
 				}
-			case t_TABLE_END:
+			case T_TABLE_END:
 				cfg = cfg.parent
-			case t_ARRAY_START:
+			case T_ARRAY_START:
 				if cfg.table == nil {
 					cfg.array[len(cfg.array)] = new(Config)
 					cfg.array[len(cfg.array)-1].parent = cfg
@@ -56,9 +56,9 @@ func (p *parser) parse() (*Config, error) {
 					cfg = cfg.table[key]
 					cfg.array = make(map[int]*Config)
 				}
-			case t_ARRAY_END:
+			case T_ARRAY_END:
 				cfg = cfg.parent
-			case t_EOF:
+			case T_EOF:
 				if t.value != "" {
 					e := errors.New(t.value)
 					return nil, e

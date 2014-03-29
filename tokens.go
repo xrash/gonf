@@ -8,11 +8,11 @@ type token struct {
 }
 
 const (
-	t_EOF            = iota
-	t_KEY
-	t_VALUE
-	t_TABLE_START
-	t_TABLE_END
-	t_ARRAY_START
-	t_ARRAY_END
+	T_EOF            = iota
+	T_KEY
+	T_VALUE
+	T_TABLE_START
+	T_TABLE_END
+	T_ARRAY_START
+	T_ARRAY_END
 )

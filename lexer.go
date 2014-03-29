@@ -54,7 +54,7 @@ func (l *lexer) finish(s ...string) {
 	if len(s) > 0 {
 		e = fmt.Sprintf("Syntax error on line %v column %v: %v", l.line, l.column, s[0])
 	}
-	l.tokens <- token{t_EOF, e}
+	l.tokens <- token{T_EOF, e}
 }
 
 func (l *lexer) emit(t tokenType) {
@@ -66,7 +66,7 @@ func (l *lexer) emit(t tokenType) {
 func (l *lexer) next() (r rune) {
 	if l.pos >= len(l.input) {
 		l.width = 0
-		return t_EOF
+		return T_EOF
 	}
 
 	r, l.width = utf8.DecodeRuneInString(l.input[l.pos:])

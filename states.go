@@ -33,19 +33,19 @@ func searchingKeyState(l *lexer) state {
 		return l.state
 	}
 
-	if r == t_EOF {
+	if r == T_EOF {
 		l.finish()
 		return nil
 	}
 
 	if r == '}' {
-		l.emit(t_TABLE_END)
+		l.emit(T_TABLE_END)
 		l.state = l.stack.pop()
 		return l.state
 	}
 
 	if r == ']' {
-		l.emit(t_ARRAY_END)
+		l.emit(T_ARRAY_END)
 		l.state = l.stack.pop()
 		return l.state
 	}
@@ -67,7 +67,7 @@ func inQuotedKeyState(l *lexer) state {
 	r := l.next()
 
 	if r == '"' {
-		l.emit(t_KEY)
+		l.emit(T_KEY)
 		return searchingValueState
 	}
 
@@ -95,7 +95,7 @@ func inKeyState(l *lexer) state {
 	r := l.next()
 
 	if isBlank(r) {
-		l.emit(t_KEY)
+		l.emit(T_KEY)
 		return searchingValueState
 	}
 
@@ -122,26 +122,26 @@ func searchingValueState(l *lexer) state {
 	}
 
 	if r == '}' {
-		l.emit(t_TABLE_END)
+		l.emit(T_TABLE_END)
 		l.state = l.stack.pop()
 		return l.state
 	}
 
 	if r == ']' {
-		l.emit(t_ARRAY_END)
+		l.emit(T_ARRAY_END)
 		l.state = l.stack.pop()
 		return l.state
 	}
 
 	if r == '{' {
-		l.emit(t_TABLE_START)
+		l.emit(T_TABLE_START)
 		l.stack.push(l.state)
 		l.state = searchingKeyState
 		return l.state
 	}
 
 	if r == '[' {
-		l.emit(t_ARRAY_START)
+		l.emit(T_ARRAY_START)
 		l.stack.push(l.state)
 		l.state = searchingValueState
 		return l.state
@@ -154,12 +154,12 @@ func inValueState(l *lexer) state {
 	r := l.next()
 
 	if isBlank(r) {
-		l.emit(t_VALUE)
+		l.emit(T_VALUE)
 		return l.state
 	}
 
-	if r == t_EOF {
-		l.emit(t_VALUE)
+	if r == T_EOF {
+		l.emit(T_VALUE)
 		l.finish()
 		return nil
 	}
@@ -171,7 +171,7 @@ func inQuotedValueState(l *lexer) state {
 	r := l.next()
 
 	if r == '"' {
-		l.emit(t_VALUE)
+		l.emit(T_VALUE)
 		return l.state
 	}
 
@@ -204,7 +204,7 @@ func inCommentState(l *lexer) state {
 		return l.state
 	}
 
-	if r == t_EOF {
+	if r == T_EOF {
 		l.finish()
 		return nil
 	}
