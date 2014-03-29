@@ -39,7 +39,7 @@ func searchingKeyState(l *lexer) state {
 	}
 
 	if r == '}' {
-		l.emit(t_MAP_END)
+		l.emit(t_TABLE_END)
 		l.state = l.stack.pop()
 		return l.state
 	}
@@ -122,7 +122,7 @@ func searchingValueState(l *lexer) state {
 	}
 
 	if r == '}' {
-		l.emit(t_MAP_END)
+		l.emit(t_TABLE_END)
 		l.state = l.stack.pop()
 		return l.state
 	}
@@ -134,7 +134,7 @@ func searchingValueState(l *lexer) state {
 	}
 
 	if r == '{' {
-		l.emit(t_MAP_START)
+		l.emit(t_TABLE_START)
 		l.stack.push(l.state)
 		l.state = searchingKeyState
 		return l.state

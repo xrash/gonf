@@ -11,7 +11,7 @@ import (
 type Config struct {
 	parent *Config
 	value string
-	map_ map[string]*Config
+	table map[string]*Config
 	array map[int]*Config
 }
 
@@ -29,15 +29,15 @@ func Read(r io.Reader) (*Config, error) {
 }
 
 func (c *Config) Length() int {
-	if c.map_ == nil {
+	if c.table == nil {
 		return len(c.array)
 	} else {
-		return len(c.map_)
+		return len(c.table)
 	}
 }
 
 func (c *Config) IsMap() bool {
-	return c.map_ != nil;
+	return c.table != nil;
 }
 
 func (c *Config) IsArray() bool {
@@ -49,7 +49,7 @@ func (c *Config) Parent() *Config {
 }
 
 func (c *Config) TraverseMap(visit func(string, *Config)) {
-	for key, value := range(c.map_) {
+	for key, value := range(c.table) {
 		visit(key, value)
 	}
 }
@@ -85,7 +85,7 @@ func (c *Config) Get(args ...interface{}) (*Config, error) {
 	for _, a := range args {
 		switch reflect.TypeOf(a).Kind() {
 		case reflect.String:
-			if c, ok = c.map_[a.(string)]; !ok {
+			if c, ok = c.table[a.(string)]; !ok {
 				return nil, errors.New("key " + a.(string) + " not found")
 			}
 		case reflect.Int:
