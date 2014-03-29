@@ -79,7 +79,7 @@ NOTE: The struct fields have to be exported so the Map function can see them thr
 
 You are encouraged to see the working examples of tests/gonf_test.go.
 
-Here is the grammar:
+Here is the LL(1) grammar:
 
     gonf ::= pair
     pair ::= key value | key value pair
@@ -89,6 +89,17 @@ Here is the grammar:
     map ::= "{" pair "}"
     array ::= "[" values "]"
     values ::= value | value values
+
+    gonf ::= pair
+    pair ::= key value pair-empty
+	pair-empty ::= pair | &
+    key ::= scalar
+    value ::= map | array | scalar
+    scalar ::= <a golang string literal>
+    map ::= "{" pair "}"
+    array ::= "[" values "]"
+	values ::= value values-empty
+	values-empty ::= values | &
 
 [the golang string literal specification](http://golang.org/ref/spec#String_literals)
 
