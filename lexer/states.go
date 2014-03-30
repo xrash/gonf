@@ -1,4 +1,4 @@
-package gonf
+package lexer
 
 func isBlank(r rune) bool {
 	return r == ' ' || r == '\t' || isLineBreak(r)
@@ -8,23 +8,7 @@ func isLineBreak(r rune) bool {
 	return r == '\n'
 }
 
-func isValidForKey(r rune) bool {
-	// 48 == '0'
-	// 57 == '9'
-	isNumber := r >= 48 && r <= 57
-
-	// 97 == 'a'
-	// 122 == 'z'
-	isLower := r >= 97 && r <= 122
-
-	// 65 == 'A'
-	// 90 == 'Z'
-	isUpper := r >= 65 && r <= 90
-
-	return isNumber || isLower || isUpper
-}
-
-func searchingKeyState(l *lexer) state {
+func searchingKeyState(l *Lexer) state {
 	r := l.next()
 
 	if r == '#' {
@@ -63,7 +47,7 @@ func searchingKeyState(l *lexer) state {
 	return inKeyState
 }
 
-func inQuotedKeyState(l *lexer) state {
+func inQuotedKeyState(l *Lexer) state {
 	r := l.next()
 
 	if r == '"' {
@@ -78,7 +62,7 @@ func inQuotedKeyState(l *lexer) state {
 	return inQuotedKeyState
 }
 
-func inQuotedBackslashedKeyState(l *lexer) state {
+func inQuotedBackslashedKeyState(l *Lexer) state {
 	r := l.next()
 
 	if r == '"' || r == '\\' {
@@ -91,7 +75,7 @@ func inQuotedBackslashedKeyState(l *lexer) state {
 	return inQuotedKeyState
 }
 
-func inKeyState(l *lexer) state {
+func inKeyState(l *Lexer) state {
 	r := l.next()
 
 	if isBlank(r) {
@@ -102,7 +86,7 @@ func inKeyState(l *lexer) state {
 	return inKeyState
 }
 
-func searchingValueState(l *lexer) state {
+func searchingValueState(l *Lexer) state {
 	r := l.next()
 
 	if r == '#' {
@@ -150,7 +134,7 @@ func searchingValueState(l *lexer) state {
 	return inValueState
 }
 
-func inValueState(l *lexer) state {
+func inValueState(l *Lexer) state {
 	r := l.next()
 
 	if isBlank(r) {
@@ -159,6 +143,7 @@ func inValueState(l *lexer) state {
 	}
 
 	if r == T_EOF {
+		l.pos++
 		l.emit(T_VALUE)
 		l.finish()
 		return nil
@@ -167,7 +152,7 @@ func inValueState(l *lexer) state {
 	return inValueState
 }
 
-func inQuotedValueState(l *lexer) state {
+func inQuotedValueState(l *Lexer) state {
 	r := l.next()
 
 	if r == '"' {
@@ -182,7 +167,7 @@ func inQuotedValueState(l *lexer) state {
 	return inQuotedValueState
 }
 
-func inQuotedBackslashedValueState(l *lexer) state {
+func inQuotedBackslashedValueState(l *Lexer) state {
 	r := l.next()
 
 	if r == '"' || r == '\\' {
@@ -195,7 +180,7 @@ func inQuotedBackslashedValueState(l *lexer) state {
 	return inQuotedValueState
 }
 
-func inCommentState(l *lexer) state {
+func inCommentState(l *Lexer) state {
 	r := l.next()
 
 	if isLineBreak(r) {

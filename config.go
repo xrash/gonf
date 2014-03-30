@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strconv"
 	"errors"
+	"github.com/xrash/gonf/lexer"
 )
 
 type Config struct {
@@ -20,23 +21,27 @@ func Read(r io.Reader) (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	input := string(b)
-	tokens := make(chan token)
-	l := newLexer(input, tokens)
+	tokens := make(chan lexer.Token)
+	l := lexer.NewLexer(input, tokens)
 	p := newParser(tokens)
-	go l.lex()
+
+	go l.Lex()
 	return p.parse()
 }
 
 func (c *Config) Length() int {
-	if c.table == nil {
+	if c.IsArray() {
 		return len(c.array)
-	} else {
+	} else if c.IsTable() {
 		return len(c.table)
 	}
+
+	return 0
 }
 
-func (c *Config) IsMap() bool {
+func (c *Config) IsTable() bool {
 	return c.table != nil;
 }
 
@@ -44,11 +49,15 @@ func (c *Config) IsArray() bool {
 	return c.array != nil;
 }
 
+func (c *Config) IsString() bool {
+	return !c.IsTable() && !c.IsArray();
+}
+
 func (c *Config) Parent() *Config {
 	return c.parent
 }
 
-func (c *Config) TraverseMap(visit func(string, *Config)) {
+func (c *Config) TraverseTable(visit func(string, *Config)) {
 	for key, value := range(c.table) {
 		visit(key, value)
 	}
@@ -62,6 +71,14 @@ func (c *Config) TraverseArray(visit func(int, *Config)) {
 
 func (c *Config) Value() string {
 	return c.value
+}
+
+func (c *Config) Table() map[string]*Config {
+	return c.table
+}
+
+func (c *Config) Array() map[int]*Config {
+	return c.array
 }
 
 func (c *Config) String(args ...interface{}) (string, error) {

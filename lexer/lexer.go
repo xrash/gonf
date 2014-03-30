@@ -1,26 +1,13 @@
-package gonf
+package lexer
 
 import (
 	"unicode/utf8"
 	"fmt"
 )
 
-type state func(l *lexer) state
+type state func(l *Lexer) state
 
-type stateStack []state
-
-func (st *stateStack) push(s state) {
-	*st = append(*st, s)
-}
-
-func (st *stateStack) pop() state {
-	l := len(*st)-1
-	s := (*st)[l]
-	*st = (*st)[:l]
-	return s
-}
-
-type lexer struct {
+type Lexer struct {
 	input string
 	start int
 	pos int
@@ -28,20 +15,20 @@ type lexer struct {
 	column int
 	width int
 	state state
-	stack *stateStack
-	tokens chan token
+	stack *stack
+	tokens chan Token
 }
 
-func newLexer(s string, c chan token) *lexer {
-	l := new(lexer)
+func NewLexer(s string, c chan Token) *Lexer {
+	l := new(Lexer)
 	l.input = s
 	l.tokens = c
 	l.line = 1
-	l.stack = new(stateStack)
+	l.stack = new(stack)
 	return l
 }
 
-func (l *lexer) lex() {
+func (l *Lexer) Lex() {
 	l.state = searchingKeyState
 	for state := l.state; state != nil; {
 		state = state(l)
@@ -49,21 +36,21 @@ func (l *lexer) lex() {
 }
 
 // the optional string act as an error message
-func (l *lexer) finish(s ...string) {
+func (l *Lexer) finish(s ...string) {
 	var e string
 	if len(s) > 0 {
 		e = fmt.Sprintf("Syntax error on line %v column %v: %v", l.line, l.column, s[0])
 	}
-	l.tokens <- token{T_EOF, e}
+	l.tokens <- NewToken(T_EOF, e)
 }
 
-func (l *lexer) emit(t tokenType) {
-	tok := token{t, l.input[l.start:(l.pos-1)]}
+func (l *Lexer) emit(t TokenType) {
+	tok := Token{t, l.input[l.start:(l.pos-1)]}
 	l.tokens <- tok
 	l.start = l.pos
 }
 
-func (l *lexer) next() (r rune) {
+func (l *Lexer) next() (r rune) {
 	if l.pos >= len(l.input) {
 		l.width = 0
 		return T_EOF
@@ -82,22 +69,22 @@ func (l *lexer) next() (r rune) {
 	return r
 }
 
-func (l *lexer) ignore() {
+func (l *Lexer) ignore() {
 	l.start = l.pos
 }
 
-func (l *lexer) backup() {
+func (l *Lexer) backup() {
 	l.column--
 	l.pos -= l.width
 	var r rune
 	r, l.width = utf8.DecodeRuneInString(l.input[l.pos:])
-	if r == '\n' {
+	if isLineBreak(r) {
 		l.line--
 		// lost the column counter :)
 		l.column = 0
 	}
 }
 
-func (l *lexer) eat() {
+func (l *Lexer) eat() {
 	l.input = l.input[:l.pos] + l.input[l.pos+l.width:]
 }

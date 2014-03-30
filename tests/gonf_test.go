@@ -63,7 +63,8 @@ database {
     }
 }
 
-# finish it up`
+# finish it up
+lastline lastvalue`
 )
 
 type teststruct struct {
@@ -178,8 +179,16 @@ func testMap(t *testing.T) {
 	}
 }
 
+func testLastLine(t *testing.T) {
+	v, _ := config.String("lastline")
+	if v != "lastvalue" {
+		t.Fail()
+	}
+}
+
 func TestAll(t *testing.T) {
 	readConfig(t)
 	testString(t)
 	testMap(t)
+	testLastLine(t)
 }
