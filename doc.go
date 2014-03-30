@@ -21,7 +21,7 @@ Below is a simple example to introduce you to the format.
         papaya
     ]
 
-As intuitively noted, the format supports maps, arrays and string literals. This should be all you need.
+ As intuitively noted, the format supports tables (maps), arrays and string literals. This should be all you need.
 
 Now, a simple example of code (given the above file):
 
@@ -83,9 +83,9 @@ Here is the grammar:
     gonf ::= pair
     pair ::= key value | key value pair
     key ::= scalar
-    value ::= map | array | scalar
+    value ::= table | array | scalar
     scalar ::= <a golang string literal>
-    map ::= "{" pair "}"
+    table ::= "{" pair "}"
     array ::= "[" values "]"
     values ::= value | value values
 
