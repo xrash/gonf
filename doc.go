@@ -1,5 +1,5 @@
 /*
-Package gonf provides an interface to a simple configuration file format.
+Package _gonf_ provides an interface to a simple configuration file format.
 
 Below is a simple example to introduce you to the format.
 
@@ -21,9 +21,9 @@ Below is a simple example to introduce you to the format.
         papaya
     ]
 
-As noted, the format supports maps, arrays and string literals. This should be all you need.
+As intuitively noted, the format supports maps, arrays and string literals. This should be all you need.
 
-A simple example of code (given the above file):
+Now, a simple example of code (given the above file):
 
     package main
 
@@ -78,7 +78,7 @@ NOTE: The struct fields have to be exported so the Map function can see them thr
 
 You are encouraged to see the working examples of tests/gonf_test.go.
 
-Here is the Backus-Naur Form (BNF) of the syntax:
+Here is the grammar:
 
     gonf ::= pair
     pair ::= key value | key value pair
@@ -89,8 +89,7 @@ Here is the Backus-Naur Form (BNF) of the syntax:
     array ::= "[" values "]"
     values ::= value | value values
 
-(the golang string literal specification http://golang.org/ref/spec#String_literals)
-
-See you space cowboy.
+[the golang string literal specification](http://golang.org/ref/spec#String_literals)
 */
+
 package gonf

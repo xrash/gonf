@@ -1,24 +1,5 @@
 package lexer
 
-type TokenType int
-
-type Token struct {
-	tokenType TokenType
-	value string
-}
-
-func NewToken(t TokenType, s string) Token {
-	return Token{t, s}
-}
-
-func (t *Token) Type() TokenType {
-	return t.tokenType
-}
-
-func (t *Token) Value() string {
-	return t.value
-}
-
 const (
 	T_EOF            = iota
 	T_KEY
@@ -28,3 +9,22 @@ const (
 	T_ARRAY_START
 	T_ARRAY_END
 )
+
+type TokenType int
+
+type Token struct {
+	tokenType TokenType
+	value string
+}
+
+func NewToken(t TokenType, v string) Token {
+	return Token{t, v}
+}
+
+func (t *Token) Type() TokenType {
+	return t.tokenType
+}
+
+func (t *Token) Value() string {
+	return t.value
+}
