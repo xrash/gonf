@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"strconv"
 	"errors"
-	"github.com/xrash/gonf/lexer"
+	"github.com/xrash/gonf/parser"
 )
 
 type Config struct {
@@ -23,12 +23,12 @@ func Read(r io.Reader) (*Config, error) {
 	}
 
 	input := string(b)
-	tokens := make(chan lexer.Token)
-	l := lexer.NewLexer(input, tokens)
-	p := newParser(tokens)
+	tokens := make(chan parser.Token)
+	l := parser.NewParser(input, tokens)
+	g := newGenerator(tokens)
 
-	go l.Lex()
-	return p.parse()
+	go l.Parse()
+	return g.generate()
 }
 
 func (c *Config) Length() int {

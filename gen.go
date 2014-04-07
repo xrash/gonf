@@ -2,18 +2,18 @@ package gonf
 
 import (
 	"errors"
-	"github.com/xrash/gonf/lexer"
+	"github.com/xrash/gonf/parser"
 )
 
-type parser struct {
-	tokens chan lexer.Token
+type generator struct {
+	tokens chan parser.Token
 }
 
-func newParser(c chan lexer.Token) *parser {
-	return &parser{c}
+func newGenerator(c chan parser.Token) *generator {
+	return &generator{c}
 }
 
-func (p *parser) parse() (*Config, error) {
+func (p *generator) generate() (*Config, error) {
 	var key string
 	var cfg *Config
 	cfg = new(Config)
@@ -23,15 +23,15 @@ func (p *parser) parse() (*Config, error) {
 		select {
 		case t := <-p.tokens:
 			switch t.Type() {
-			case lexer.T_KEY:
+			case parser.T_KEY:
 				key = t.Value()
-			case lexer.T_VALUE:
+			case parser.T_VALUE:
 				if cfg.table == nil {
 					cfg.array[len(cfg.array)] = &Config{value:t.Value()}
 				} else {
 					cfg.table[key] = &Config{value: t.Value()}
 				}
-			case lexer.T_TABLE_START:
+			case parser.T_TABLE_START:
 				if cfg.table == nil {
 					cfg.array[len(cfg.array)] = new(Config)
 					cfg.array[len(cfg.array)-1].parent = cfg
@@ -43,9 +43,9 @@ func (p *parser) parse() (*Config, error) {
 					cfg = cfg.table[key]
 					cfg.table = make(map[string]*Config)
 				}
-			case lexer.T_TABLE_END:
+			case parser.T_TABLE_END:
 				cfg = cfg.parent
-			case lexer.T_ARRAY_START:
+			case parser.T_ARRAY_START:
 				if cfg.table == nil {
 					cfg.array[len(cfg.array)] = new(Config)
 					cfg.array[len(cfg.array)-1].parent = cfg
@@ -57,9 +57,9 @@ func (p *parser) parse() (*Config, error) {
 					cfg = cfg.table[key]
 					cfg.array = make(map[int]*Config)
 				}
-			case lexer.T_ARRAY_END:
+			case parser.T_ARRAY_END:
 				cfg = cfg.parent
-			case lexer.T_EOF:
+			case parser.T_EOF:
 				if t.Value() != "" {
 					e := errors.New(t.Value())
 					return nil, e

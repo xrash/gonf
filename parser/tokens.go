@@ -1,4 +1,4 @@
-package lexer
+package parser
 
 const (
 	T_EOF            = iota
