@@ -1,11 +1,15 @@
 package lexer
 
-func isBlank(r rune) bool {
-	return r == ' ' || r == '\t' || isLineBreak(r)
+func isSpace(r rune) bool {
+	return r == ' ' || r == '\t'
 }
 
 func isLineBreak(r rune) bool {
 	return r == '\n'
+}
+
+func isBlank(r rune) bool {
+	return isSpace(r) || isLineBreak(r)
 }
 
 func searchingKeyState(l *Lexer) state {
