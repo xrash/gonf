@@ -19,31 +19,18 @@ func err(got tokens.Token, expected ...string) error {
 	return errors.New(fmt.Sprintf(msg, strings.Join(expected, " OR "), got.Line(), got.Column(), got))
 }
 
-func gonfState(p *Parser) error {
-	token := p.lookup()
-
-	switch token.Type() {
-	case tokens.T_STRING:
-		p.stack.push(pairState)
-	case tokens.T_TABLE_END:
-	case tokens.T_EOF:
-	default:
-		return err(token, "STRING", "{", "EOF")
-	}
-
-	return nil
-}
-
 func pairState(p *Parser) error {
 	token := p.lookup()
 
 	switch token.Type() {
 	case tokens.T_STRING:
-		p.stack.push(gonfState)
+		p.stack.push(pairState)
 		p.stack.push(valueState)
 		p.stack.push(keyState)
+	case tokens.T_TABLE_END:
+	case tokens.T_EOF:
 	default:
-		return err(token, "STRING")
+		return err(token, "STRING", "{", "EOF")
 	}
 
 	return nil

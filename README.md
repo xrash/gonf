@@ -81,8 +81,7 @@ You are encouraged to see the working examples of tests/gonf_test.go.
 
 Here is the LL(1) grammar:
 
-    gonf -> pair | &
-    pair -> key value gonf
+    pair -> key value pair | &
     key -> string
     value -> table | array | string
     table -> { pair }

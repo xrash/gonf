@@ -22,7 +22,7 @@ func NewParser(t chan tokens.Token) *Parser {
 }
 
 func (p *Parser) Parse() error {
-	p.stack.push(gonfState)
+	p.stack.push(pairState)
 	p.next()
 
 	for !p.stack.empty() {
