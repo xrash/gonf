@@ -1,202 +1,196 @@
 package parser
 
-func isSpace(r rune) bool {
-	return r == ' ' || r == '\t'
+import (
+	"fmt"
+	"errors"
+	"strings"
+	"github.com/xrash/gonf/tokens"
+)
+
+type state func(p *Parser) error
+
+func err(got tokens.Token, expected ...string) error {
+	msg := "Expected %s at line %d:%d. Got %s."
+
+	for k, e := range(expected) {
+		expected[k] = "'" + e + "'"
+	}
+
+	return errors.New(fmt.Sprintf(msg, strings.Join(expected, " OR "), got.Line(), got.Column(), got))
 }
 
-func isLineBreak(r rune) bool {
-	return r == '\n'
+func gonfState(p *Parser) error {
+	token := p.lookup()
+
+	switch token.Type() {
+	case tokens.T_STRING:
+		p.stack.push(pairState)
+	case tokens.T_TABLE_END:
+	case tokens.T_EOF:
+	default:
+		return err(token, "STRING", "{", "EOF")
+	}
+
+	return nil
 }
 
-func isBlank(r rune) bool {
-	return isSpace(r) || isLineBreak(r)
+func pairState(p *Parser) error {
+	token := p.lookup()
+
+	switch token.Type() {
+	case tokens.T_STRING:
+		p.stack.push(gonfState)
+		p.stack.push(valueState)
+		p.stack.push(keyState)
+	default:
+		return err(token, "STRING")
+	}
+
+	return nil
 }
 
-func searchingKeyState(p *Parser) state {
-	r := p.next()
+func keyState(p *Parser) error {
+	token := p.lookup()
 
-	if r == '#' {
-		p.stack.push(p.state)
-		p.state = inCommentState
-		return p.state
+	switch token.Type() {
+	case tokens.T_STRING:
+		p.stack.push(stringState)
+	default:
+		return err(token, "STRING")
 	}
 
-	if r == T_EOF {
-		p.finish()
-		return nil
-	}
-
-	if r == '}' {
-		p.emit(T_TABLE_END)
-		p.state = p.stack.pop()
-		return p.state
-	}
-
-	if r == ']' {
-		p.emit(T_ARRAY_END)
-		p.state = p.stack.pop()
-		return p.state
-	}
-
-	if r == '"' {
-		p.ignore()
-		return inQuotedKeyState
-	}
-
-	if isBlank(r) {
-		p.ignore()
-		return searchingKeyState
-	}
-
-	return inKeyState
+	return nil
 }
 
-func inQuotedKeyState(p *Parser) state {
-	r := p.next()
+func valueState(p *Parser) error {
+	token := p.lookup()
 
-	if r == '"' {
-		p.emit(T_KEY)
-		return searchingValueState
+	switch token.Type() {
+	case tokens.T_STRING:
+		p.stack.push(stringState)
+	case tokens.T_ARRAY_START:
+		p.stack.push(arrayState)
+	case tokens.T_TABLE_START:
+		p.stack.push(tableState)
+	default:
+		return err(token, "STRING", "[", "{")
 	}
 
-	if r == '\\' {
-		return inQuotedBackslashedKeyState
-	}
-
-	return inQuotedKeyState
+	return nil
 }
 
-func inQuotedBackslashedKeyState(p *Parser) state {
-	r := p.next()
+func arrayState(p *Parser) error {
+	token := p.lookup()
 
-	if r == '"' || r == '\\' {
-		p.backup()
-		p.backup()
-		p.eat()
+	switch token.Type() {
+		case tokens.T_ARRAY_START:
+		p.stack.push(arrayEndState)
+		p.stack.push(valuesState)
+		p.stack.push(arrayStartState)
+	default:
+		return err(token, "[")
+	}
+
+	return nil
+}
+
+func valuesState(p *Parser) error {
+	token := p.lookup()
+
+	switch token.Type() {
+	case tokens.T_STRING:
+		p.stack.push(valuesState)
+		p.stack.push(valueState)
+	case tokens.T_ARRAY_START:
+		p.stack.push(valuesState)
+		p.stack.push(valueState)
+	case tokens.T_TABLE_START:
+		p.stack.push(valuesState)
+		p.stack.push(valueState)
+	case tokens.T_ARRAY_END:
+	default:
+		return err(token, "STRING", "[", "{", "]")
+	}
+
+	return nil
+}
+
+func tableState(p *Parser) error {
+	token := p.lookup()
+
+	switch token.Type() {
+	case tokens.T_TABLE_START:
+		p.stack.push(tableEndState)
+		p.stack.push(pairState)
+		p.stack.push(tableStartState)
+	default:
+		return err(token, "{")
+	}
+
+	return nil
+}
+
+func stringState(p *Parser) error {
+	token := p.lookup()
+
+	switch token.Type() {
+		case tokens.T_STRING:
 		p.next()
+	default:
+		return err(token, "STRING")
 	}
 
-	return inQuotedKeyState
+	return nil
 }
 
-func inKeyState(p *Parser) state {
-	r := p.next()
+func arrayStartState(p *Parser) error {
+	token := p.lookup()
 
-	if isBlank(r) {
-		p.emit(T_KEY)
-		return searchingValueState
-	}
-
-	return inKeyState
-}
-
-func searchingValueState(p *Parser) state {
-	r := p.next()
-
-	if r == '#' {
-		p.stack.push(p.state)
-		p.state = inCommentState
-		return p.state
-	}
-
-	if isBlank(r) {
-		p.ignore()
-		return searchingValueState
-	}
-
-	if r == '"' {
-		p.ignore()
-		return inQuotedValueState
-	}
-
-	if r == '}' {
-		p.emit(T_TABLE_END)
-		p.state = p.stack.pop()
-		return p.state
-	}
-
-	if r == ']' {
-		p.emit(T_ARRAY_END)
-		p.state = p.stack.pop()
-		return p.state
-	}
-
-	if r == '{' {
-		p.emit(T_TABLE_START)
-		p.stack.push(p.state)
-		p.state = searchingKeyState
-		return p.state
-	}
-
-	if r == '[' {
-		p.emit(T_ARRAY_START)
-		p.stack.push(p.state)
-		p.state = searchingValueState
-		return p.state
-	}
-
-	return inValueState
-}
-
-func inValueState(p *Parser) state {
-	r := p.next()
-
-	if isBlank(r) {
-		p.emit(T_VALUE)
-		return p.state
-	}
-
-	if r == T_EOF {
-		p.pos++
-		p.emit(T_VALUE)
-		p.finish()
-		return nil
-	}
-
-	return inValueState
-}
-
-func inQuotedValueState(p *Parser) state {
-	r := p.next()
-
-	if r == '"' {
-		p.emit(T_VALUE)
-		return p.state
-	}
-
-	if r == '\\' {
-		return inQuotedBackslashedValueState
-	}
-
-	return inQuotedValueState
-}
-
-func inQuotedBackslashedValueState(p *Parser) state {
-	r := p.next()
-
-	if r == '"' || r == '\\' {
-		p.backup()
-		p.backup()
-		p.eat()
+	switch token.Type() {
+		case tokens.T_ARRAY_START:
 		p.next()
+	default:
+		return err(token, "[")
 	}
 
-	return inQuotedValueState
+	return nil
 }
 
-func inCommentState(p *Parser) state {
-	r := p.next()
+func arrayEndState(p *Parser) error {
+	token := p.lookup()
 
-	if isLineBreak(r) {
-		p.ignore()
-		p.state = p.stack.pop()
-		return p.state
+	switch token.Type() {
+		case tokens.T_ARRAY_END:
+		p.next()
+	default:
+		return err(token, "]")
 	}
 
-	if r == T_EOF {
-		p.finish()
-		return nil
+	return nil
+}
+
+func tableStartState(p *Parser) error {
+	token := p.lookup()
+
+	switch token.Type() {
+		case tokens.T_TABLE_START:
+		p.next()
+	default:
+		return err(token, "{")
 	}
 
-	return inCommentState
+	return nil
+}
+
+func tableEndState(p *Parser) error {
+	token := p.lookup()
+
+	switch token.Type() {
+		case tokens.T_TABLE_END:
+		p.next()
+	default:
+		return err(token, "}")
+	}
+
+	return nil
 }

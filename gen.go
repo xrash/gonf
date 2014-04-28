@@ -1,5 +1,5 @@
 package gonf
-
+/*
 import (
 	"errors"
 	"github.com/xrash/gonf/parser"
@@ -69,3 +69,4 @@ func (p *generator) generate() (*Config, error) {
 		}
 	}
 }
+*/

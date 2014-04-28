@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"strconv"
 	"errors"
+	"github.com/xrash/gonf/tokens"
+	"github.com/xrash/gonf/lexer"
 	"github.com/xrash/gonf/parser"
 )
 
@@ -22,13 +24,16 @@ func Read(r io.Reader) (*Config, error) {
 		return nil, err
 	}
 
-	input := string(b)
-	tokens := make(chan parser.Token)
-	l := parser.NewParser(input, tokens)
-	g := newGenerator(tokens)
+	i := string(b)
+	t := make(chan tokens.Token)
+	l := lexer.NewLexer(i, t)
+	p := parser.NewParser(t)
 
-	go l.Parse()
-	return g.generate()
+	// Run the Lexer concurrently with the Parser
+	go l.Lex()
+	err = p.Parse()
+
+	return nil, err
 }
 
 func (c *Config) Length() int {
