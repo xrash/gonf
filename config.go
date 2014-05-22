@@ -24,12 +24,12 @@ func Read(r io.Reader) (*Config, error) {
 		return nil, err
 	}
 
-	i := string(b)
-	t := make(chan tokens.Token)
-	l := lexer.NewLexer(i, t)
-	p := parser.NewParser(t)
+	input := string(b)
+	tokens := make(chan tokens.Token)
 
-	// Run the Lexer concurrently with the Parser
+	l := lexer.NewLexer(input, tokens)
+	p := parser.NewParser(tokens)
+
 	go l.Lex()
 	err = p.Parse()
 

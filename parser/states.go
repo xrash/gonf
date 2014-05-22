@@ -114,6 +114,8 @@ func tableState(p *Parser) error {
 		return err(token, "{")
 	}
 
+	fmt.Println("table")
+
 	return nil
 }
 
@@ -121,11 +123,13 @@ func stringState(p *Parser) error {
 	token := p.lookup()
 
 	switch token.Type() {
-		case tokens.T_STRING:
+	case tokens.T_STRING:
 		p.next()
 	default:
 		return err(token, "STRING")
 	}
+
+	fmt.Println("T string")
 
 	return nil
 }
@@ -140,6 +144,8 @@ func arrayStartState(p *Parser) error {
 		return err(token, "[")
 	}
 
+	fmt.Println("T array_start")
+
 	return nil
 }
 
@@ -152,6 +158,8 @@ func arrayEndState(p *Parser) error {
 	default:
 		return err(token, "]")
 	}
+
+	fmt.Println("T array_end")
 
 	return nil
 }
@@ -166,6 +174,8 @@ func tableStartState(p *Parser) error {
 		return err(token, "{")
 	}
 
+	fmt.Println("T table_start")
+
 	return nil
 }
 
@@ -178,6 +188,8 @@ func tableEndState(p *Parser) error {
 	default:
 		return err(token, "}")
 	}
+
+	fmt.Println("T table_end")
 
 	return nil
 }

@@ -1,9 +1,6 @@
 package parser
 
 import (
-	"fmt"
-	"runtime"
-	"reflect"
 	"github.com/xrash/gonf/tokens"
 )
 
@@ -11,6 +8,7 @@ type Parser struct {
 	tokens chan tokens.Token
 	token tokens.Token
 	stack stack
+	tree *Tree
 }
 
 func NewParser(t chan tokens.Token) *Parser {
@@ -18,6 +16,7 @@ func NewParser(t chan tokens.Token) *Parser {
 		t,
 		tokens.Token{},
 		newStack(),
+		NewTree(),
 	}
 }
 
@@ -27,7 +26,6 @@ func (p *Parser) Parse() error {
 
 	for !p.stack.empty() {
 		state := p.stack.pop()
-		fmt.Println(fname(state))
 		if error := state(p); error != nil {
 			return error
 		}
@@ -42,8 +40,4 @@ func (p *Parser) next() {
 
 func (p *Parser) lookup() tokens.Token {
 	return p.token
-}
-
-func fname(i interface{}) string {
-    return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
 }
