@@ -60,6 +60,18 @@ func (l *Lexer) ignore() {
 	l.start = l.pos
 }
 
+func (l *Lexer) backup() {
+	l.column--
+	l.pos -= l.width
+	var r rune
+	r, l.width = utf8.DecodeRuneInString(l.input[l.pos:])
+	if isLineBreak(r) {
+		l.line--
+		// lost the column counter :)
+		l.column = 666
+	}
+}
+
 func (l *Lexer) eat() {
 	l.input = l.input[:l.pos] + l.input[l.pos+l.width:]
 }

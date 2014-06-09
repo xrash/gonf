@@ -37,7 +37,7 @@ func Read(r io.Reader) (*Config, error) {
 		return nil, err
 	}
 
-	return generate(p.Tree())
+	return generate(p.Tree()), nil
 }
 
 func (c *Config) Length() int {

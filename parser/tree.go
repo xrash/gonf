@@ -15,9 +15,9 @@ type Node interface {
 }
 
 type PairNode struct {
-	key *KeyNode
-	value *ValueNode
-	pair *PairNode
+	Key *KeyNode
+	Value *ValueNode
+	Pair *PairNode
 }
 
 func NewPairNode(key *KeyNode, value *ValueNode, pair *PairNode) *PairNode {
@@ -28,47 +28,45 @@ func NewPairNode(key *KeyNode, value *ValueNode, pair *PairNode) *PairNode {
 	}
 }
 
-func (p *PairNode) Kind() int {
+func (n *PairNode) Kind() int {
 	return PAIR_NODE
 }
 
 type KeyNode struct {
-	value *StringNode
+	Value *StringNode
 }
 
-func NewKeyNode(s *StringNode) *KeyNode {
+func NewKeyNode(value *StringNode) *KeyNode {
 	return &KeyNode{
-		s,
+		value,
 	}
 }
 
-func (k *KeyNode) Kind() int {
+func (n *KeyNode) Kind() int {
 	return KEY_NODE
 }
 
-type ValueType int
-
 type ValueNode struct {
-	string *StringNode
-	table *TableNode
-	array *ArrayNode
+	String *StringNode
+	Table *TableNode
+	Array *ArrayNode
 }
 
-func NewValueNode(s *StringNode, t *TableNode, a *ArrayNode) *ValueNode {
+func NewValueNode(string *StringNode, table *TableNode, array *ArrayNode) *ValueNode {
 	return &ValueNode{
-		s,
-		t,
-		a,
+		string,
+		table,
+		array,
 	}
 }
 
-func (v *ValueNode) Kind() int {
+func (n *ValueNode) Kind() int {
 	return VALUE_NODE
 }
 
 type ValuesNode struct {
-	value *ValueNode
-	values *ValuesNode
+	Value *ValueNode
+	Values *ValuesNode
 }
 
 func NewValuesNode(value *ValueNode, values *ValuesNode) *ValuesNode {
@@ -78,26 +76,26 @@ func NewValuesNode(value *ValueNode, values *ValuesNode) *ValuesNode {
 	}
 }
 
-func (v *ValuesNode) Kind() int {
+func (n *ValuesNode) Kind() int {
 	return VALUES_NODE
 }
 
 type StringNode struct {
-	value string
+	Value string
 }
 
-func (s *StringNode) Kind() int {
-	return STRING_NODE
-}
-
-func NewStringNode(s string) *StringNode {
+func NewStringNode(value string) *StringNode {
 	return &StringNode{
-		s,
+		value,
 	}
 }
 
+func (n *StringNode) Kind() int {
+	return STRING_NODE
+}
+
 type TableNode struct {
-	pair *PairNode
+	Pair *PairNode
 }
 
 func NewTableNode(pair *PairNode) *TableNode {
@@ -106,20 +104,20 @@ func NewTableNode(pair *PairNode) *TableNode {
 	}
 }
 
-func (t *TableNode) Kind() int {
+func (n *TableNode) Kind() int {
 	return TABLE_NODE
 }
 
 type ArrayNode struct {
-	values *ValuesNode
+	Values *ValuesNode
 }
 
-func NewArrayNode(vn *ValuesNode) *ArrayNode {
+func NewArrayNode(values *ValuesNode) *ArrayNode {
 	return &ArrayNode{
-		vn,
+		values,
 	}
 }
 
-func (a *ArrayNode) Kind() int {
+func (n *ArrayNode) Kind() int {
 	return ARRAY_NODE
 }

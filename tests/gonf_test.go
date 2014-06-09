@@ -49,6 +49,7 @@ group www-data
 
 anything "any thing"
 backslashed "wa\\"
+double-backslashed "wa\\\\"
 escaped "\""
 
 database {
@@ -99,6 +100,7 @@ func testString(t *testing.T) {
 	group, _ := config.String("group")
 	anything, _ := config.String("anything")
 	backslashed, _ := config.String("backslashed")
+	dblbackslashed, _ := config.String("double-backslashed")
 	escaped, _ := config.String("escaped")
 	host, _ := config.String("database", "host")
 	user, _ := config.String("database", "auth", "user")
@@ -116,6 +118,7 @@ func testString(t *testing.T) {
 		group: "www-data",
 		anything: "any thing",
 		backslashed: "wa\\",
+		dblbackslashed: "wa\\\\",
 		escaped: "\"",
 		host: "127.0.0.1",
 		user: "testuser",
@@ -134,12 +137,14 @@ func testString(t *testing.T) {
 
 	for i, v := range stringtests {
 		if i != v {
+			fmt.Printf("%v != %v\n", i, v)
 			t.Fail()
 		}
 	}
 
 	for i, v := range inttests {
 		if i != v {
+			fmt.Printf("%v != %v\n", i, v)
 			t.Fail()
 		}
 	}
@@ -185,7 +190,6 @@ func testLastLine(t *testing.T) {
 
 func TestAll(t *testing.T) {
 	readConfig(t)
-	return
 	testString(t)
 	testMap(t)
 	testLastLine(t)

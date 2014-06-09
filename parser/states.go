@@ -34,8 +34,6 @@ func pairState(p *Parser) error {
 		return err(token, "STRING", "{", "EOF")
 	}
 
-	fmt.Println("pairState")
-
 	return nil
 }
 
@@ -49,8 +47,6 @@ func keyState(p *Parser) error {
 	default:
 		return err(token, "STRING")
 	}
-
-	fmt.Println("keyState")
 
 	return nil
 }
@@ -72,8 +68,6 @@ func valueState(p *Parser) error {
 		return err(token, "STRING", "[", "{")
 	}
 
-	fmt.Println("valueState")
-
 	return nil
 }
 
@@ -89,8 +83,6 @@ func arrayState(p *Parser) error {
 	default:
 		return err(token, "[")
 	}
-
-	fmt.Println("arrayState")
 
 	return nil
 }
@@ -116,8 +108,6 @@ func valuesState(p *Parser) error {
 		return err(token, "STRING", "[", "{", "]")
 	}
 
-	fmt.Println("valuesState")
-
 	return nil
 }
 
@@ -134,8 +124,6 @@ func tableState(p *Parser) error {
 		return err(token, "{")
 	}
 
-	fmt.Println("tableState")
-
 	return nil
 }
 
@@ -150,7 +138,6 @@ func stringState(p *Parser) error {
 	}
 
 	p.nodeStack.push(NewStringNode(token.Value()))
-	fmt.Println("stringState")
 
 	return nil
 }
@@ -165,8 +152,6 @@ func arrayStartState(p *Parser) error {
 		return err(token, "[")
 	}
 
-	fmt.Println("arrayStartState")
-
 	return nil
 }
 
@@ -179,8 +164,6 @@ func arrayEndState(p *Parser) error {
 	default:
 		return err(token, "]")
 	}
-
-	fmt.Println("arrayEndState")
 
 	return nil
 }
@@ -195,8 +178,6 @@ func tableStartState(p *Parser) error {
 		return err(token, "{")
 	}
 
-	fmt.Println("tableStartState")
-
 	return nil
 }
 
@@ -210,14 +191,10 @@ func tableEndState(p *Parser) error {
 		return err(token, "}")
 	}
 
-	fmt.Println("tableEndState")
-
 	return nil
 }
 
 func buildPairNode(p *Parser) error {
-	fmt.Println("=> buildPairNode")
-
 	var pn *PairNode
 
 	if node := p.nodeStack.pop(); node.Kind() == PAIR_NODE {
@@ -235,8 +212,6 @@ func buildPairNode(p *Parser) error {
 }
 
 func buildValueStringNode(p *Parser) error {
-	fmt.Println("=> buildValueStringNode")
-
 	sn := p.nodeStack.pop().(*StringNode)
 	p.nodeStack.push(NewValueNode(sn, nil, nil))
 
@@ -244,8 +219,6 @@ func buildValueStringNode(p *Parser) error {
 }
 
 func buildValueArrayNode(p *Parser) error {
-	fmt.Println("=> buildValueArrayNode")
-
 	vn := p.nodeStack.pop().(*ValuesNode)
 	an := NewArrayNode(vn)
 	p.nodeStack.push(NewValueNode(nil, nil, an))
@@ -254,8 +227,6 @@ func buildValueArrayNode(p *Parser) error {
 }
 
 func buildKeyNode(p *Parser) error {
-	fmt.Println("=> buildKeyNode")
-
 	sn := p.nodeStack.pop().(*StringNode)
 	p.nodeStack.push(NewKeyNode(sn))
 
@@ -263,8 +234,6 @@ func buildKeyNode(p *Parser) error {
 }
 
 func buildValuesNode(p *Parser) error {
-	fmt.Println("=> buildValuesNode")
-
 	var values *ValuesNode
 
 	if node := p.nodeStack.pop(); node.Kind() == VALUES_NODE {
@@ -280,14 +249,10 @@ func buildValuesNode(p *Parser) error {
 }
 
 func buildArrayNode(p *Parser) error {
-	fmt.Println("=> buildArrayNode")
-
 	return nil
 }
 
 func buildValueTableNode(p *Parser) error {
-	fmt.Println("=> buildValueTableNode")
-
 	tn := p.nodeStack.pop().(*TableNode)
 	p.nodeStack.push(NewValueNode(nil, tn, nil))
 
@@ -295,8 +260,6 @@ func buildValueTableNode(p *Parser) error {
 }
 
 func buildTableNode(p *Parser) error {
-	fmt.Println("=> buildTableNode")
-
 	pn := p.nodeStack.pop().(*PairNode)
 	p.nodeStack.push(NewTableNode(pn))
 

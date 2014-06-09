@@ -86,7 +86,6 @@ func inQuotedStringState(l *Lexer) state {
 	}
 
 	if r == '\\' {
-		l.ignore()
 		return inBackslashedStringState
 	}
 
@@ -94,6 +93,8 @@ func inQuotedStringState(l *Lexer) state {
 }
 
 func inBackslashedStringState(l *Lexer) state {
+	l.backup()
+	l.eat()
 	l.next()
 	return inQuotedStringState
 }
