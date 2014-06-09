@@ -9,7 +9,6 @@ type Parser struct {
 	token tokens.Token
 	stack stateStack
 	nodeStack nodeStack
-	tree *PairNode
 }
 
 func NewParser(t chan tokens.Token) *Parser {
@@ -18,28 +17,23 @@ func NewParser(t chan tokens.Token) *Parser {
 		tokens.Token{},
 		newStateStack(),
 		newNodeStack(),
-		nil,
 	}
 }
 
-func (p *Parser) Parse() error {
+func (p *Parser) Parse() (*PairNode, error) {
 	p.stack.push(pairState)
 	p.next()
 
 	for !p.stack.empty() {
 		state := p.stack.pop()
 		if error := state(p); error != nil {
-			return error
+			return nil, error
 		}
 	}
 
-	p.tree = p.nodeStack.pop().(*PairNode)
+	root := p.nodeStack.pop().(*PairNode)
 
-	return nil
-}
-
-func (p *Parser) Tree() *PairNode {
-	return p.tree
+	return root, nil
 }
 
 func (p *Parser) next() {

@@ -31,13 +31,14 @@ func Read(r io.Reader) (*Config, error) {
 	p := parser.NewParser(tokens)
 
 	go l.Lex()
-	err = p.Parse()
+	var tree *parser.PairNode
+	tree, err = p.Parse()
 
 	if err != nil {
 		return nil, err
 	}
 
-	return generate(p.Tree()), nil
+	return generate(tree), nil
 }
 
 func (c *Config) Length() int {
