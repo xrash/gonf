@@ -87,10 +87,10 @@ Here is the LL(1) grammar:
     table -> { pair }
     array -> [ values ]
     values -> value values | &
+	string -> <golang string spec>
 
-[the golang string literal specification](http://golang.org/ref/spec#String_literals)
+[the golang string specification](http://golang.org/ref/spec#String_literals)
 
 ## TODO
- - Detect syntax errors and generate nice error messages
+ - Add implicit semi-colons to support unquoted long strings separated by spaces
  - Write a real spec
- - Think about the possibility of extending the format to support including external files (something like @include)

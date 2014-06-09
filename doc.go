@@ -21,7 +21,7 @@ Below is a simple example to introduce you to the format.
         papaya
     ]
 
- As intuitively noted, the format supports tables (maps), arrays and string literals. This should be all you need.
+As intuitively noted, the format supports tables (maps), arrays and string literals. This should be all you need.
 
 Now, a simple example of code (given the above file):
 
@@ -78,18 +78,16 @@ NOTE: The struct fields have to be exported so the Map function can see them thr
 
 You are encouraged to see the working examples of tests/gonf_test.go.
 
-Here is the grammar:
+Here is the LL(1) grammar:
 
-    gonf ::= pair
-    pair ::= key value | key value pair
-    key ::= scalar
-    value ::= table | array | scalar
-    scalar ::= <a golang string literal>
-    table ::= "{" pair "}"
-    array ::= "[" values "]"
-    values ::= value | value values
+    pair -> key value pair | &
+    key -> string
+    value -> table | array | string
+    table -> { pair }
+    array -> [ values ]
+    values -> value values | &
+	string -> <golang string spec>
 
-[the golang string literal specification](http://golang.org/ref/spec#String_literals)
+[the golang string specification](http://golang.org/ref/spec#String_literals)
 */
-
 package gonf
