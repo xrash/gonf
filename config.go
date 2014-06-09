@@ -33,7 +33,11 @@ func Read(r io.Reader) (*Config, error) {
 	go l.Lex()
 	err = p.Parse()
 
-	return nil, err
+	if err != nil {
+		return nil, err
+	}
+
+	return generate(p.Tree())
 }
 
 func (c *Config) Length() int {

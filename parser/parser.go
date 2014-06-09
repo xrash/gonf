@@ -2,21 +2,24 @@ package parser
 
 import (
 	"github.com/xrash/gonf/tokens"
+	"fmt"
 )
 
 type Parser struct {
 	tokens chan tokens.Token
 	token tokens.Token
-	stack stack
-	tree *Tree
+	stack stateStack
+	nodeStack nodeStack
+	tree *PairNode
 }
 
 func NewParser(t chan tokens.Token) *Parser {
 	return &Parser{
 		t,
 		tokens.Token{},
-		newStack(),
-		NewTree(),
+		newStateStack(),
+		newNodeStack(),
+		nil,
 	}
 }
 
@@ -31,7 +34,23 @@ func (p *Parser) Parse() error {
 		}
 	}
 
+	p.tree = p.nodeStack.pop().(*PairNode)
+
+	fmt.Println()
+	fmt.Println("=============")
+	fmt.Println()
+
+	fmt.Println(p.tree.key.value)
+	fmt.Println(p.tree.value.string.value)
+	fmt.Println(p.tree.pair.key.value)
+	fmt.Println(p.tree.pair.value.array.values.value.table.pair.pair.value.string.value)
+	fmt.Println(p.tree.pair.value.array.values.values.value.table.pair.value.string.value)
+
 	return nil
+}
+
+func (p *Parser) Tree() *PairNode {
+	return p.tree
 }
 
 func (p *Parser) next() {

@@ -1,17 +1,9 @@
 package gonf
 
 import (
-	"github.com/xrash/gonf/tokens"
+	"github.com/xrash/gonf/parser"
 )
 
-type Generator struct {
-	tokens chan tokens.Token
-}
-
-func NewGenerator(tokens chan tokens.Token) *Generator {
-	return &Generator{tokens}
-}
-
-func (g *Generator) Gen() (*Config, error) {
+func generate(root *parser.PairNode) (*Config, error) {
 	return nil, nil
 }
