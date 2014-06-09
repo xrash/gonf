@@ -1,21 +1,21 @@
 package gonf
 
 import (
+	"errors"
+	"github.com/xrash/gonf/lexer"
+	"github.com/xrash/gonf/parser"
+	"github.com/xrash/gonf/tokens"
 	"io"
 	"io/ioutil"
 	"reflect"
 	"strconv"
-	"errors"
-	"github.com/xrash/gonf/tokens"
-	"github.com/xrash/gonf/lexer"
-	"github.com/xrash/gonf/parser"
 )
 
 type Config struct {
 	parent *Config
-	value string
-	table map[string]*Config
-	array map[int]*Config
+	value  string
+	table  map[string]*Config
+	array  map[int]*Config
 }
 
 func Read(r io.Reader) (*Config, error) {
@@ -51,15 +51,15 @@ func (c *Config) Length() int {
 }
 
 func (c *Config) IsTable() bool {
-	return c.table != nil;
+	return c.table != nil
 }
 
 func (c *Config) IsArray() bool {
-	return c.array != nil;
+	return c.array != nil
 }
 
 func (c *Config) IsString() bool {
-	return !c.IsTable() && !c.IsArray();
+	return !c.IsTable() && !c.IsArray()
 }
 
 func (c *Config) Parent() *Config {
@@ -67,13 +67,13 @@ func (c *Config) Parent() *Config {
 }
 
 func (c *Config) TraverseTable(visit func(string, *Config)) {
-	for key, value := range(c.table) {
+	for key, value := range c.table {
 		visit(key, value)
 	}
 }
 
 func (c *Config) TraverseArray(visit func(int, *Config)) {
-	for key, value := range(c.array) {
+	for key, value := range c.array {
 		visit(key, value)
 	}
 }
