@@ -33,6 +33,8 @@ func (t Token) String() string {
 	switch t.Type() {
 	case T_EOF:
 		return "EOF"
+	case T_QUOTE:
+		return "\""
 	case T_STRING:
 		return "'" + t.value + "'"
 	case T_ARRAY_START:

@@ -10,6 +10,7 @@ import (
 const (
 	teststring = `
 testinteger 22
+testbozo "quotes aaaa"
 
 anarraywithmaps [
     {

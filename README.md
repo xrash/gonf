@@ -87,10 +87,16 @@ Here is the LL(1) grammar:
     table -> { pair }
     array -> [ values ]
     values -> value values | &
-	string -> <golang string spec>
+    string -> quoted-string | unquoted-string
+    quoted-string -> " LITERAL "
+    unquoted-string -> NONSPACED-LITERAL
+
+    LITERAL => <ANYTHING SUPPORTED BY THE IMPLEMENTATION>
+    NONSPACED-LITERAL => <LITERAL WITHOUT SPACES>
 
 [the golang string specification](http://golang.org/ref/spec#String_literals)
 
 ## TODO
  - Add implicit semi-colons to support unquoted long strings separated by spaces
+ - Study the possibility to merge multiple duplicate keys in an array
  - Write a real spec

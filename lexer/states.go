@@ -59,7 +59,7 @@ func searchingState(l *Lexer) state {
 	}
 
 	if r == '"' {
-		l.ignore()
+		l.emit(tokens.T_QUOTE)
 		return inQuotedStringState
 	}
 
@@ -82,6 +82,8 @@ func inQuotedStringState(l *Lexer) state {
 
 	if r == '"' {
 		l.emit(tokens.T_STRING)
+		l.next()
+		l.emit(tokens.T_QUOTE)
 		return searchingState
 	}
 
