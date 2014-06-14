@@ -13,7 +13,7 @@ import (
 
 type Config struct {
 	parent *Config
-	value  string
+	string string
 	table  map[string]*Config
 	array  map[int]*Config
 }
@@ -79,16 +79,20 @@ func (c *Config) TraverseArray(visit func(int, *Config)) {
 	}
 }
 
-func (c *Config) Value() string {
-	return c.value
+func (c *Config) Table(args ...interface{}) (map[string]*Config, error) {
+	c, err := c.Get(args...)
+	if err != nil {
+		return nil, err
+	}
+	return c.table, nil
 }
 
-func (c *Config) Table() map[string]*Config {
-	return c.table
-}
-
-func (c *Config) Array() map[int]*Config {
-	return c.array
+func (c *Config) Array(args ...interface{}) (map[int]*Config, error) {
+	c, err := c.Get(args...)
+	if err != nil {
+		return nil, err
+	}
+	return c.array, nil
 }
 
 func (c *Config) String(args ...interface{}) (string, error) {
@@ -96,7 +100,7 @@ func (c *Config) String(args ...interface{}) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return c.value, nil
+	return c.string, nil
 }
 
 func (c *Config) Int(args ...interface{}) (int, error) {

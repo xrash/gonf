@@ -33,6 +33,8 @@ func (p *Parser) Parse() (*PairNode, error) {
 
 	root := p.nodeStack.pop().(*PairNode)
 
+	merge(root)
+
 	return root, nil
 }
 

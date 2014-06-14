@@ -44,6 +44,8 @@ Now, a simple example of code (given the above file):
         fmt.Println(config.String("fruits", 1)) // orange
     }
 
+# Mapping
+
 You can also directly map your config to a struct. Example:
 
     package main
@@ -75,9 +77,79 @@ You can also directly map your config to a struct. Example:
         fmt.Println(database.Auth.User) // testuser
     }
 
-NOTE: The struct fields have to be exported so the Map function can see them through reflection
+> NOTE: The struct fields have to be exported so the Map function can see them through reflection
+
+# Semantic key merging
+
+One nice feature is the automatic merge of multiple equal keys into an array. Consider the following example:
+
+    song {
+	    name "Naked Tongues"
+		artist Perturbator
+	}
+	
+	song {
+	    name "Battle of the Young"
+		artist ZeroCall
+	}
+
+This will be translated in a semantic analyzing phase to:
+
+    song [
+	    {
+		    name "Naked Tongues"
+			artist Perturbator
+		}
+		{
+		    name "Battle of the Young"
+			artist ZeroCall
+		}
+	]
+
+And can therefore be accessed like this:
+
+    config.String("song", 0, "name") // Naked Tongues
+    config.String("song", 1, "artist") // ZeroCall
+
+# Traversing non-scalar types
+
+A problem that arises in practice is the need to traverse through non-scalar types. In gonf, we got tables and arrays, and both can be traversed. The order of elements in a table may not be guaranteed by the implementation, but the order in an array is expected to be guaranteed in any implementation. There are two ways to traverse through these types:
+
+### Using traversing functions
+
+    config.TraverseTable(func(key string, value gonf.*Config) {
+	    fmt.Println(key, value)
+	})
+
+    config.TraverseArray(func(index int, value gonf.*Config) {
+	    fmt.Println(index, value)
+	})
+
+### Using the underlying implemented data structure
+
+    a := config.Array()
+	
+	for key, value := range a {
+	    fmt.Println(key, value)
+	}
+
+    t := config.Table()
+
+	for key, value := range t {
+	    fmt.Println(key, value)
+	}
+
+If you need to check which type the Config object holds, you can use the functions:
+
+    config.IsString()
+    config.IsArray()
+    config.IsTable()
+
+# More examples
 
 You are encouraged to see the working examples of tests/gonf_test.go.
+
+# Help for implementers
 
 Here is the LL(1) grammar:
 
@@ -96,7 +168,7 @@ Here is the LL(1) grammar:
 
 [the golang string specification](http://golang.org/ref/spec#String_literals)
 
-## TODO
- - Add implicit semi-colons to support unquoted long strings separated by spaces
- - Study the possibility to merge multiple duplicate keys in an array
- - Write a real spec
+# TODO
+ - Study implicit semi-colons to support unquoted long strings separated by spaces.
+ - Write a real spec.
+ - Implement arrays with arrays. Sorry, guys. It was just less work to deal with maps.

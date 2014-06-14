@@ -10,7 +10,25 @@ import (
 const (
 	teststring = `
 testinteger 22
-testbozo "quotes aaaa"
+
+testmerge "merge zero"
+testmerge "merge one"
+
+yatm {
+    bozo bozoca
+    nariz "de pipoca"
+    nariz "de papel"
+}
+
+yatm {
+    naked tongues
+}
+
+yatm [
+    Perturbator
+    ZeroCall
+    "Battle of the Young"
+]
 
 anarraywithmaps [
     {
@@ -182,6 +200,37 @@ func testMap(t *testing.T) {
 	}
 }
 
+func testMerge(t *testing.T) {
+	testmerge0, _ := config.String("testmerge", 0)
+	testmerge1, _ := config.String("testmerge", 1)
+	yatm0, _ := config.String("yatm", 0, "bozo")
+	yatm1, _ := config.String("yatm", 0, "nariz", 0)
+	yatm2, _ := config.String("yatm", 0, "nariz", 1)
+	yatm3, _ := config.String("yatm", 1, "naked")
+	yatm4, _ := config.String("yatm", 2, 0)
+	yatm5, _ := config.String("yatm", 2, 1)
+	yatm6, _ := config.String("yatm", 2, 2)
+
+	stringtests := map[string]string{
+		testmerge0: "merge zero",
+		testmerge1: "merge one",
+		yatm0: "bozoca",
+		yatm1: "de pipoca",
+		yatm2: "de papel",
+		yatm3: "tongues",
+		yatm4: "Perturbator",
+		yatm5: "ZeroCall",
+		yatm6: "Battle of the Young",
+	}
+
+	for i, v := range stringtests {
+		if i != v {
+			fmt.Printf("%v != %v\n", i, v)
+			t.Fail()
+		}
+	}
+}
+
 func testLastLine(t *testing.T) {
 	v, _ := config.String("lastline")
 	if v != "lastvalue" {
@@ -193,5 +242,6 @@ func TestAll(t *testing.T) {
 	readConfig(t)
 	testString(t)
 	testMap(t)
+	testMerge(t)
 	testLastLine(t)
 }

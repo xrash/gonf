@@ -37,7 +37,7 @@ func genValueNode(node *parser.ValueNode) *Config {
 
 func genStringNode(node *parser.StringNode) *Config {
 	c := new(Config)
-	c.value = node.Value
+	c.string = node.Value
 	return c
 }
 
