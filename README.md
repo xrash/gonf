@@ -177,7 +177,7 @@ Below is the predict table:
 |             key -> string            |        " SYMBOL         |
 |            value -> table            |            {            |
 |            value -> array            |            [            |
-|            value -> string           |   " NONSPACED LITERAL   |
+|            value -> string           |        " SYMBOL         |
 |           table -> { pair }          |            {            |
 |          array -> [ values ]         |            [            |
 |        values -> value values        |     { [ " SYMBOL        |
