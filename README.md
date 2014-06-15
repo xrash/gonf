@@ -168,6 +168,25 @@ Here is the LL(1) grammar:
 
 [the golang string specification](http://golang.org/ref/spec#String_literals)
 
+Below is the predict table:
+
+|              production              |          stack          |
+|:------------------------------------:|:-----------------------:|
+|        pair -> key value pair        |   " NONSPACED-LITERAL   |
+|               pair -> &              |            &            |
+|             key -> string            |   " NONSPACED-LITERAL   |
+|            value -> table            |            {            |
+|            value -> array            |            [            |
+|            value -> string           |   " NONSPACED LITERAL   |
+|           table -> { pair }          |            {            |
+|          array -> [ values ]         |            [            |
+|        values -> value values        | { [ " NONSPACED-LITERAL |
+|             values ->  &             |            &            |
+|        string -> quoted-string       |            "            |
+|       string -> unquoted-string      |    NONSPACED-LITERAL    |
+|     quoted-string -> " LITERAL "     |            "            |
+| unquoted-string -> NONSPACED-LITERAL |    NONSPACED-LITERAL    |
+
 # TODO
  - Study implicit semi-colons to support unquoted long strings separated by spaces.
  - Write a real spec.
