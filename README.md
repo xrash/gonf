@@ -190,4 +190,3 @@ Below is the predict table:
 # TODO
  - Study implicit semi-colons to support unquoted long strings separated by spaces.
  - Write a real spec.
- - Implement arrays with arrays. Sorry, guys. It was just less work to deal with maps.

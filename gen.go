@@ -50,9 +50,17 @@ func genArrayNode(node *parser.ArrayNode) *Config {
 }
 
 func genValuesNode(node *parser.ValuesNode) *Config {
-	c := new(Config)
-	c.array = make(map[int]*Config)
+	root := node
 	i := 0
+	for node != nil {
+		i++
+		node = node.Values
+	}
+
+	c := new(Config)
+	c.array = make([]*Config, i)
+	node = root
+	i = 0
 
 	for node != nil {
 		c.array[i] = genValueNode(node.Value)

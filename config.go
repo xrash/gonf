@@ -15,7 +15,7 @@ type Config struct {
 	parent *Config
 	string string
 	table  map[string]*Config
-	array  map[int]*Config
+	array  []*Config
 }
 
 func Read(r io.Reader) (*Config, error) {
@@ -87,7 +87,7 @@ func (c *Config) Table(args ...interface{}) (map[string]*Config, error) {
 	return c.table, nil
 }
 
-func (c *Config) Array(args ...interface{}) (map[int]*Config, error) {
+func (c *Config) Array(args ...interface{}) ([]*Config, error) {
 	c, err := c.Get(args...)
 	if err != nil {
 		return nil, err
@@ -120,9 +120,10 @@ func (c *Config) Get(args ...interface{}) (*Config, error) {
 				return nil, errors.New("key " + a.(string) + " not found")
 			}
 		case reflect.Int:
-			if c = c.array[a.(int)]; c == nil {
+			if a.(int) >= len(c.array) {
 				return nil, errors.New("index " + strconv.Itoa(a.(int)) + " not found")
 			}
+			c = c.array[a.(int)]
 		}
 	}
 	return c, nil
