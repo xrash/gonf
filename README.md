@@ -161,10 +161,10 @@ Here is the LL(1) grammar:
     values -> value values | &
     string -> quoted-string | unquoted-string
     quoted-string -> " LITERAL "
-    unquoted-string -> NONSPACED-LITERAL
+    unquoted-string -> SYMBOL
 
     LITERAL => <ANYTHING SUPPORTED BY THE IMPLEMENTATION>
-    NONSPACED-LITERAL => <LITERAL WITHOUT SPACES>
+    SYMBOL => <NONSPACED-LITERAL>
 
 [the golang string specification](http://golang.org/ref/spec#String_literals)
 
@@ -172,21 +172,21 @@ Below is the predict table:
 
 |              production              |          stack          |
 |:------------------------------------:|:-----------------------:|
-|        pair -> key value pair        |   " NONSPACED-LITERAL   |
+|        pair -> key value pair        |        " SYMBOL         |
 |               pair -> &              |            &            |
-|             key -> string            |   " NONSPACED-LITERAL   |
+|             key -> string            |        " SYMBOL         |
 |            value -> table            |            {            |
 |            value -> array            |            [            |
 |            value -> string           |   " NONSPACED LITERAL   |
 |           table -> { pair }          |            {            |
 |          array -> [ values ]         |            [            |
-|        values -> value values        | { [ " NONSPACED-LITERAL |
+|        values -> value values        |     { [ " SYMBOL        |
 |             values ->  &             |            &            |
 |        string -> quoted-string       |            "            |
-|       string -> unquoted-string      |    NONSPACED-LITERAL    |
+|       string -> unquoted-string      |         SYMBOL          |
 |     quoted-string -> " LITERAL "     |            "            |
-| unquoted-string -> NONSPACED-LITERAL |    NONSPACED-LITERAL    |
+|       unquoted-string -> SYMBOL      |         SYMBOL          |
 
 # TODO
- - Study implicit semi-colons to support unquoted long strings separated by spaces.
+ - Study implicit semi-colons to support unquoted long strings with spaces. It will probably defeat the regular language of the lexer but, you know, we can try.
  - Write a real spec.
