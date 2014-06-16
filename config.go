@@ -25,7 +25,7 @@ func Read(r io.Reader) (*Config, error) {
 	}
 
 	input := string(b)
-	tokens := make(chan tokens.Token)
+	tokens := make(chan tokens.Token, len(input) / 8)
 
 	l := lexer.NewLexer(input, tokens)
 	p := parser.NewParser(tokens)
