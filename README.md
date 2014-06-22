@@ -125,7 +125,7 @@ A problem that arises in practice is the need to traverse through non-scalar typ
 	    fmt.Println(index, value)
 	})
 
-### Using the underlying implemented data structure
+### Using the underlying data structure
 
     a := config.Array()
 	
