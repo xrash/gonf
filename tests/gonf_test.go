@@ -231,6 +231,38 @@ func testMerge(t *testing.T) {
 	}
 }
 
+func testArray(t *testing.T) {
+	a, _ := config.Array("anarraywithmaps")
+	a0, _ := a[0].String("name")
+	a1, _ := a[1].String("command")
+
+	tests := map[string]string{
+		a0: "first",
+		a1: "fourth",
+	}
+
+	for i, v := range tests {
+		if i != v {
+			fmt.Printf("%v != %v\n", i, v)
+			t.Fail()
+		}
+	}
+
+	moretests := map[int]string{
+		0: "arrays",
+		1: "like this",
+	}
+
+	awesome, _ := config.Get("awesome")
+	awesome.TraverseArray(func(i int, c *gonf.Config) {
+		s, _ := c.String()
+		if moretests[i] != s {
+			fmt.Printf("%v != %v\n", moretests[i], s)
+			t.Fail()
+		}
+	})
+}
+
 func testLastLine(t *testing.T) {
 	v, _ := config.String("lastline")
 	if v != "lastvalue" {
@@ -241,6 +273,7 @@ func testLastLine(t *testing.T) {
 func TestAll(t *testing.T) {
 	readConfig(t)
 	testString(t)
+	testArray(t)
 	testMap(t)
 	testMerge(t)
 	testLastLine(t)
