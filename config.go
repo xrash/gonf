@@ -179,7 +179,19 @@ func (c *Config) rmap(t reflect.Type, v reflect.Value) {
 		v.Set(reflect.MakeSlice(v.Type(), c.Length(), c.Length()))
 		for i := 0; i < v.Len(); i++ {
 			c, _ := c.Get(i)
-			c.rmap(v.Index(i).Type(), v.Index(i))
+
+			switch (t.Elem()) {
+			case reflect.TypeOf(""):
+				if value, err := c.String(); err == nil {
+					v.Index(i).SetString(value)
+				}
+			case reflect.TypeOf(0):
+				if value, err := c.Int(); err == nil {
+					v.Index(i).SetInt(int64(value))
+				}
+			default:
+				c.rmap(v.Index(i).Type(), v.Index(i))
+			}
 		}
 	}
 }

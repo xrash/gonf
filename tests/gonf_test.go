@@ -80,6 +80,11 @@ database {
     }
 }
 
+stringarray [
+    datum1
+    datum2
+]
+
 # finish it up
 lastline lastvalue`
 )
@@ -100,6 +105,7 @@ type teststruct struct {
 	} `gonf:"database"`
 	TestInteger int `gonf:"testinteger"`
 	DoNotExists string `gonf:"donotexists"`
+	StringArray []string `gonf:"stringarray"`
 }
 
 var config *gonf.Config
@@ -181,6 +187,8 @@ func testMap(t *testing.T) {
 		s.Group: "www-data",
 		s.Database.Host: "127.0.0.1",
 		s.Database.Auth.User: "testuser",
+		s.StringArray[0]: "datum1",
+		s.StringArray[1]: "datum2",
 	}
 
 	inttests := map[int]int{
