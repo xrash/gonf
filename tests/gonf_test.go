@@ -14,6 +14,17 @@ testinteger 22
 testmerge "merge zero"
 testmerge "merge one"
 
+testsingleint 1
+testsingleint 2
+
+testsinglestruct {
+    bozo bozo
+}
+
+testsinglestruct {
+    bozo wachacha
+}
+
 yatm {
     bozo bozoca
     nariz "de pipoca"
@@ -106,6 +117,12 @@ type teststruct struct {
 	TestInteger int `gonf:"testinteger"`
 	DoNotExists string `gonf:"donotexists"`
 	StringArray []string `gonf:"stringarray"`
+	TestMerge []string `gonf:"testmerge"`
+	TestIntegers []int `gonf:"testinteger"`
+	TestSingleInteger int `gonf:"testsingleint"`
+	TestSingleStruct struct {
+		Bozo string `gonf:"bozo"`
+	} `gonf:"testsinglestruct"`
 }
 
 var config *gonf.Config
@@ -189,10 +206,15 @@ func testMap(t *testing.T) {
 		s.Database.Auth.User: "testuser",
 		s.StringArray[0]: "datum1",
 		s.StringArray[1]: "datum2",
+		s.TestMerge[0]: "merge zero",
+		s.TestMerge[1]: "merge one",
+		s.TestSingleStruct.Bozo: "wachacha",
 	}
 
 	inttests := map[int]int{
 		s.TestInteger: 22,
+		s.TestIntegers[0]: 22,
+		s.TestSingleInteger: 2,
 	}
 
 	for i, v := range stringtests {
