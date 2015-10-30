@@ -9,6 +9,7 @@ import (
 
 const (
 	teststring = `
+
 testinteger 22
 
 testmerge "merge zero"
@@ -96,11 +97,30 @@ stringarray [
     datum2
 ]
 
+mapwithstrings {
+    one   two
+    three four
+}
+
+mapwithstructs {
+    blase {
+        test yeah
+    }
+
+    blase2 {
+        test wooo
+    }
+}
+
 # finish it up
 lastline lastvalue`
 )
 
 type teststruct struct {
+	MapWithStrings map[string]string `gonf:"mapwithstrings"`
+	MapWithStructs map[string]struct {
+		Test string `gonf:"test"`
+	} `gonf:"mapwithstructs"`
 	AnArrayWithMaps []struct {
 		Name string `gonf:"name"`
 		Command string `gonf:"command"`
@@ -209,6 +229,8 @@ func testMap(t *testing.T) {
 		s.TestMerge[0]: "merge zero",
 		s.TestMerge[1]: "merge one",
 		s.TestSingleStruct.Bozo: "wachacha",
+		s.MapWithStrings["one"]: "two",
+		s.MapWithStrings["three"]: "four",
 	}
 
 	inttests := map[int]int{

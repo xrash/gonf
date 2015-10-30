@@ -31,6 +31,7 @@ func Read(r io.Reader) (*Config, error) {
 	p := parser.NewParser(tokens)
 
 	go l.Lex()
+
 	var tree *parser.PairNode
 	tree, err = p.Parse()
 
@@ -150,7 +151,6 @@ func (c *Config) Map(s interface{}) error {
 }
 
 func (c *Config) rmap(t reflect.Type, v reflect.Value) {
-
 	if t.Kind() == reflect.Struct {
 		for i := 0; i < t.NumField(); i++ {
 			field := t.Field(i)
@@ -208,6 +208,11 @@ func (c *Config) rmap(t reflect.Type, v reflect.Value) {
 					if c, err := c.Get(tag); err == nil {
 						c.rmap(f.Type(), f)
 					}
+
+				case reflect.Map:
+					if c, err := c.Get(tag); err == nil {
+						c.rmap(f.Type(), f)
+					}
 				}
 			}
 		}
@@ -223,7 +228,37 @@ func (c *Config) rmap(t reflect.Type, v reflect.Value) {
 			v.Set(reflect.MakeSlice(v.Type(), 1, 1))
 			mapArrayElement(t, v, c, 0)
 		}
+
+	} else if t.Kind() == reflect.Map {
+		if t.Key() != reflect.TypeOf("") {
+			return
+		}
+
+		if c.IsTable() {
+			v.Set(reflect.MakeMap(v.Type()))
+			table, _ := c.Table()
+			for key := range table {
+				c, _ := c.Get(key)
+				switch (t.Elem()) {
+
+				case reflect.TypeOf(""):
+					if value, err := c.String(); err == nil {
+						v.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(value))
+					}
+
+				case reflect.TypeOf(0):
+					if value, err := c.Int(); err == nil {
+						v.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(value))
+					}
+
+				default:
+					v.SetMapIndex(reflect.ValueOf(key), reflect.New(t.Elem()).Elem())
+//					c.rmap(v.MapIndex(reflect.ValueOf(key)).Type(), v.MapIndex(reflect.ValueOf(key)))
+				}
+			}
+		}
 	}
+
 }
 
 func mapArrayElement(t reflect.Type, v reflect.Value, c *Config, i int) {

@@ -3,8 +3,6 @@ Package _gonf_ provides an interface to a simple configuration file format.
 
 Below is a simple example to introduce you to the format.
 
-    # any.conf
-
     database {
         host 127.0.0.1
         schema test
