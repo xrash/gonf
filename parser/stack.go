@@ -11,7 +11,7 @@ func (s *stack) push(i interface{}) {
 }
 
 func (s *stack) pop() interface{} {
-	l := len(*s)-1
+	l := len(*s) - 1
 	st := (*s)[l]
 	*s = (*s)[:l]
 	return st

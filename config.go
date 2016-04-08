@@ -25,7 +25,7 @@ func Read(r io.Reader) (*Config, error) {
 	}
 
 	input := string(b)
-	tokens := make(chan tokens.Token, len(input) / 8)
+	tokens := make(chan tokens.Token, len(input)/8)
 
 	l := lexer.NewLexer(input, tokens)
 	p := parser.NewParser(tokens)
@@ -162,7 +162,7 @@ func (c *Config) rmap(t reflect.Type, v reflect.Value) {
 				case reflect.String:
 					if c, err := c.Get(tag); err == nil {
 						if c.IsArray() {
-							if c, err := c.Get(c.Length()-1); err == nil {
+							if c, err := c.Get(c.Length() - 1); err == nil {
 								if value, err := c.String(); err == nil {
 									f.SetString(value)
 								}
@@ -177,7 +177,7 @@ func (c *Config) rmap(t reflect.Type, v reflect.Value) {
 				case reflect.Int:
 					if c, err := c.Get(tag); err == nil {
 						if c.IsArray() {
-							if c, err := c.Get(c.Length()-1); err == nil {
+							if c, err := c.Get(c.Length() - 1); err == nil {
 								if value, err := c.Int(); err == nil {
 									f.SetInt(int64(value))
 								}
@@ -192,7 +192,7 @@ func (c *Config) rmap(t reflect.Type, v reflect.Value) {
 				case reflect.Struct:
 					if c, err := c.Get(tag); err == nil {
 						if c.IsArray() {
-							if c, err := c.Get(c.Length()-1); err == nil {
+							if c, err := c.Get(c.Length() - 1); err == nil {
 								if c, err := c.Get(); err == nil {
 									c.rmap(f.Type(), f)
 								}
@@ -239,7 +239,7 @@ func (c *Config) rmap(t reflect.Type, v reflect.Value) {
 			table, _ := c.Table()
 			for key := range table {
 				c, _ := c.Get(key)
-				switch (t.Elem()) {
+				switch t.Elem() {
 
 				case reflect.TypeOf(""):
 					if value, err := c.String(); err == nil {
@@ -253,7 +253,7 @@ func (c *Config) rmap(t reflect.Type, v reflect.Value) {
 
 				default:
 					v.SetMapIndex(reflect.ValueOf(key), reflect.New(t.Elem()).Elem())
-//					c.rmap(v.MapIndex(reflect.ValueOf(key)).Type(), v.MapIndex(reflect.ValueOf(key)))
+					//					c.rmap(v.MapIndex(reflect.ValueOf(key)).Type(), v.MapIndex(reflect.ValueOf(key)))
 				}
 			}
 		}
@@ -262,7 +262,7 @@ func (c *Config) rmap(t reflect.Type, v reflect.Value) {
 }
 
 func mapArrayElement(t reflect.Type, v reflect.Value, c *Config, i int) {
-	switch (t.Elem()) {
+	switch t.Elem() {
 	case reflect.TypeOf(""):
 		if value, err := c.String(); err == nil {
 			v.Index(i).SetString(value)

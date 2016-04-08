@@ -1,7 +1,7 @@
 package tokens
 
 const (
-	T_EOF            = iota
+	T_EOF = iota
 	T_QUOTE
 	T_STRING
 	T_TABLE_START

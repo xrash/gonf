@@ -1,10 +1,10 @@
 package parser
 
 import (
-	"fmt"
 	"errors"
-	"strings"
+	"fmt"
 	"github.com/xrash/gonf/tokens"
+	"strings"
 )
 
 type state func(p *Parser) error
@@ -12,7 +12,7 @@ type state func(p *Parser) error
 func err(got tokens.Token, expected ...string) error {
 	msg := "Expected %s at line %d:%d. Got %s."
 
-	for k, e := range(expected) {
+	for k, e := range expected {
 		expected[k] = "'" + e + "'"
 	}
 
@@ -86,7 +86,7 @@ func arrayState(p *Parser) error {
 	token := p.lookup()
 
 	switch token.Type() {
-		case tokens.T_ARRAY_START:
+	case tokens.T_ARRAY_START:
 		p.stack.push(buildArrayNode)
 		p.stack.push(arrayEndState)
 		p.stack.push(valuesState)
@@ -217,7 +217,7 @@ func arrayStartState(p *Parser) error {
 	token := p.lookup()
 
 	switch token.Type() {
-		case tokens.T_ARRAY_START:
+	case tokens.T_ARRAY_START:
 		p.next()
 	default:
 		return err(token, "[")
@@ -230,7 +230,7 @@ func arrayEndState(p *Parser) error {
 	token := p.lookup()
 
 	switch token.Type() {
-		case tokens.T_ARRAY_END:
+	case tokens.T_ARRAY_END:
 		p.next()
 	default:
 		return err(token, "]")
@@ -243,7 +243,7 @@ func tableStartState(p *Parser) error {
 	token := p.lookup()
 
 	switch token.Type() {
-		case tokens.T_TABLE_START:
+	case tokens.T_TABLE_START:
 		p.next()
 	default:
 		return err(token, "{")
@@ -256,7 +256,7 @@ func tableEndState(p *Parser) error {
 	token := p.lookup()
 
 	switch token.Type() {
-		case tokens.T_TABLE_END:
+	case tokens.T_TABLE_END:
 		p.next()
 	default:
 		return err(token, "}")

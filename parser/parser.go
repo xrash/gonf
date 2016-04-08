@@ -5,9 +5,9 @@ import (
 )
 
 type Parser struct {
-	tokens chan tokens.Token
-	token tokens.Token
-	stack stateStack
+	tokens    chan tokens.Token
+	token     tokens.Token
+	stack     stateStack
 	nodeStack nodeStack
 }
 
@@ -39,7 +39,7 @@ func (p *Parser) Parse() (*PairNode, error) {
 }
 
 func (p *Parser) next() {
-	p.token = <- p.tokens
+	p.token = <-p.tokens
 }
 
 func (p *Parser) lookup() tokens.Token {

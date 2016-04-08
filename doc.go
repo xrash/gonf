@@ -84,7 +84,7 @@ One nice feature is the automatic merge of multiple equal keys into an array. Co
 	    name "Naked Tongues"
 		artist Perturbator
 	}
-	
+
 	song {
 	    name "Battle of the Young"
 		artist ZeroCall
@@ -125,7 +125,7 @@ A problem that arises in practice is the need to traverse through non-scalar typ
 ### Using the underlying implemented data structure
 
     a := config.Array()
-	
+
 	for key, value := range a {
 	    fmt.Println(key, value)
 	}

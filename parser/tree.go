@@ -15,9 +15,9 @@ type Node interface {
 }
 
 type PairNode struct {
-	Key *KeyNode
+	Key   *KeyNode
 	Value *ValueNode
-	Pair *PairNode
+	Pair  *PairNode
 }
 
 func NewPairNode(key *KeyNode, value *ValueNode, pair *PairNode) *PairNode {
@@ -48,8 +48,8 @@ func (n *KeyNode) Kind() int {
 
 type ValueNode struct {
 	String *StringNode
-	Table *TableNode
-	Array *ArrayNode
+	Table  *TableNode
+	Array  *ArrayNode
 }
 
 func NewValueNode(string *StringNode, table *TableNode, array *ArrayNode) *ValueNode {
@@ -65,7 +65,7 @@ func (n *ValueNode) Kind() int {
 }
 
 type ValuesNode struct {
-	Value *ValueNode
+	Value  *ValueNode
 	Values *ValuesNode
 }
 

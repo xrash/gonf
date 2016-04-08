@@ -1,18 +1,18 @@
 package lexer
 
 import (
-	"unicode/utf8"
 	"github.com/xrash/gonf/tokens"
+	"unicode/utf8"
 )
 
 type Lexer struct {
-	input string
-	start int
-	pos int
-	line int
+	input  string
+	start  int
+	pos    int
+	line   int
 	column int
-	width int
-	state state
+	width  int
+	state  state
 	tokens chan tokens.Token
 }
 

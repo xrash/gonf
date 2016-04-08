@@ -2,9 +2,9 @@ package tests
 
 import (
 	"fmt"
+	"github.com/xrash/gonf"
 	"strings"
 	"testing"
-	"github.com/xrash/gonf"
 )
 
 const (
@@ -122,11 +122,11 @@ type teststruct struct {
 		Test string `gonf:"test"`
 	} `gonf:"mapwithstructs"`
 	AnArrayWithMaps []struct {
-		Name string `gonf:"name"`
+		Name    string `gonf:"name"`
 		Command string `gonf:"command"`
 	} `gonf:"anarraywithmaps"`
 	Username string `gonf:"username"`
-	Group string `gonf:"group"`
+	Group    string `gonf:"group"`
 	Database struct {
 		Host string `gonf:"host"`
 		Auth struct {
@@ -134,13 +134,13 @@ type teststruct struct {
 			Pass string `gonf:"pass"`
 		} `gonf:"auth"`
 	} `gonf:"database"`
-	TestInteger int `gonf:"testinteger"`
-	DoNotExists string `gonf:"donotexists"`
-	StringArray []string `gonf:"stringarray"`
-	TestMerge []string `gonf:"testmerge"`
-	TestIntegers []int `gonf:"testinteger"`
-	TestSingleInteger int `gonf:"testsingleint"`
-	TestSingleStruct struct {
+	TestInteger       int      `gonf:"testinteger"`
+	DoNotExists       string   `gonf:"donotexists"`
+	StringArray       []string `gonf:"stringarray"`
+	TestMerge         []string `gonf:"testmerge"`
+	TestIntegers      []int    `gonf:"testinteger"`
+	TestSingleInteger int      `gonf:"testsingleint"`
+	TestSingleStruct  struct {
 		Bozo string `gonf:"bozo"`
 	} `gonf:"testsinglestruct"`
 }
@@ -176,25 +176,25 @@ func testString(t *testing.T) {
 	donotexists, _ := config.String("donotexists")
 
 	stringtests := map[string]string{
-		username: "www-data",
-		group: "www-data",
-		anything: "any thing",
-		backslashed: "wa\\",
+		username:       "www-data",
+		group:          "www-data",
+		anything:       "any thing",
+		backslashed:    "wa\\",
 		dblbackslashed: "wa\\\\",
-		escaped: "\"",
-		host: "127.0.0.1",
-		user: "testuser",
-		arrays: "arrays",
-		likethis: "like this",
-		wololo: "just as values",
-		donotexists: "",
+		escaped:        "\"",
+		host:           "127.0.0.1",
+		user:           "testuser",
+		arrays:         "arrays",
+		likethis:       "like this",
+		wololo:         "just as values",
+		donotexists:    "",
 	}
 
 	inttests := map[int]int{
 		testinteger: 22,
-		damn0one: 1,
-		damn1two: 20,
-		damn20: 42,
+		damn0one:    1,
+		damn1two:    20,
+		damn20:      42,
 	}
 
 	for i, v := range stringtests {
@@ -218,24 +218,24 @@ func testMap(t *testing.T) {
 	config.Map(s)
 
 	stringtests := map[string]string{
-		s.AnArrayWithMaps[0].Name: "first",
+		s.AnArrayWithMaps[0].Name:    "first",
 		s.AnArrayWithMaps[1].Command: "fourth",
-		s.Username: "www-data",
-		s.Group: "www-data",
-		s.Database.Host: "127.0.0.1",
-		s.Database.Auth.User: "testuser",
-		s.StringArray[0]: "datum1",
-		s.StringArray[1]: "datum2",
-		s.TestMerge[0]: "merge zero",
-		s.TestMerge[1]: "merge one",
-		s.TestSingleStruct.Bozo: "wachacha",
-		s.MapWithStrings["one"]: "two",
-		s.MapWithStrings["three"]: "four",
+		s.Username:                   "www-data",
+		s.Group:                      "www-data",
+		s.Database.Host:              "127.0.0.1",
+		s.Database.Auth.User:         "testuser",
+		s.StringArray[0]:             "datum1",
+		s.StringArray[1]:             "datum2",
+		s.TestMerge[0]:               "merge zero",
+		s.TestMerge[1]:               "merge one",
+		s.TestSingleStruct.Bozo:      "wachacha",
+		s.MapWithStrings["one"]:      "two",
+		s.MapWithStrings["three"]:    "four",
 	}
 
 	inttests := map[int]int{
-		s.TestInteger: 22,
-		s.TestIntegers[0]: 22,
+		s.TestInteger:       22,
+		s.TestIntegers[0]:   22,
 		s.TestSingleInteger: 2,
 	}
 
@@ -266,13 +266,13 @@ func testMerge(t *testing.T) {
 	stringtests := map[string]string{
 		testmerge0: "merge zero",
 		testmerge1: "merge one",
-		yatm0: "bozoca",
-		yatm1: "de pipoca",
-		yatm2: "de papel",
-		yatm3: "tongues",
-		yatm4: "Perturbator",
-		yatm5: "ZeroCall",
-		yatm6: "Battle of the Young",
+		yatm0:      "bozoca",
+		yatm1:      "de pipoca",
+		yatm2:      "de papel",
+		yatm3:      "tongues",
+		yatm4:      "Perturbator",
+		yatm5:      "ZeroCall",
+		yatm6:      "Battle of the Young",
 	}
 
 	for i, v := range stringtests {
