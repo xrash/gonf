@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/xrash/gonf.svg?branch=master)](http://travis-ci.org/xrash/gonf)
+
 # gonf
 
 Package _gonf_ implements a simple configuration file format.
