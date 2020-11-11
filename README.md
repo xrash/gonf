@@ -1,81 +1,87 @@
 # gonf
 
-Package _gonf_ provides an interface to a simple configuration file format.
+Package _gonf_ implements a simple configuration file format.
 
-Below is a simple example to introduce you to the format.
+Below is an example to introduce you to the format.
 
-    # any.conf
+```
+# any.conf
 
-    database {
-        host 127.0.0.1
-        schema test
-        auth {
-            user testuser
-            pass testpass
-        }
+database {
+    host 127.0.0.1
+    schema test
+    auth {
+        user testuser
+        pass testpass
     }
+}
 
-    fruits [
-        pear
-        orange
-        lemon
-        papaya
-    ]
+fruits [
+    pear
+    orange
+    lemon
+    papaya
+]
+```
 
 As intuitively noted, the format supports tables (maps), arrays and string literals. This should be all you need.
 
-Now, a simple example of code (given the above file):
+Given the above file, here is a practical code example:
 
-    package main
+```go
+package main
 
-    import (
-        "os"
-        "fmt"
-        "github.com/xrash/gonf"
-    )
+import (
+    "os"
+    "fmt"
+    "github.com/xrash/gonf"
+)
 
-    func main() {
-        file, _ := os.Open("any.conf")
-        config, _ := gonf.Read(file)
+func main() {
+    file, _ := os.Open("any.conf")
+    config, _ := gonf.Read(file)
 
-        fmt.Println(config.String("database", "host")) // 127.0.0.1
-        fmt.Println(config.String("database", "auth", "user")) // testuser
-        fmt.Println(config.String("fruits", 0)) // pear
-        fmt.Println(config.String("fruits", 1)) // orange
-    }
+    fmt.Println(config.String("database", "host")) // 127.0.0.1
+    fmt.Println(config.String("database", "auth", "user")) // testuser
+    fmt.Println(config.String("fruits", 0)) // pear
+    fmt.Println(config.String("fruits", 1)) // orange
+}
+```
 
 # Mapping
 
 You can also directly map your config to a struct. Example:
 
-    package main
+```go
+package main
 
-    import (
-        "os"
-        "fmt"
-        "github.com/xrash/gonf"
-    )
+import (
+    "os"
+    "fmt"
+    "github.com/xrash/gonf"
+)
 
-    type Database struct {
-        Host string `gonf:"host"`
-        Schema string `gonf:"schema"`
-        Auth struct {
-            User string `gonf:"user"`
-            Pass string `gonf:"pass"`
-        } `gonf:"auth"`
-    }
+type Database struct {
+    Host string `gonf:"host"`
+    Schema string `gonf:"schema"`
+    Auth struct {
+        User string `gonf:"user"`
+        Pass string `gonf:"pass"`
+    } `gonf:"auth"`
+}
 
-    func main() {
-        database := new(Database)
+func main() {
+    database := new(Database)
 
-        file, _ := os.Open("any.conf")
-        config, _ := gonf.Read(file)
-        config, _ = config.Get("database")
+    file, _ := os.Open("any.conf")
+    config, _ := gonf.Read(file)
+    config, _ = config.Get("database")
 
-        config.Map(database)
-        fmt.Println(database.Schema) // test
-        fmt.Println(database.Auth.User) // testuser
-    }
+    config.Map(database)
+    fmt.Println(database.Schema) // test
+    fmt.Println(database.Auth.User) // testuser
+}
+```
 
 > NOTE: The struct fields have to be exported so the Map function can see them through reflection
 
@@ -83,33 +89,39 @@ You can also directly map your config to a struct. Example:
 
 One nice feature is the automatic merge of multiple equal keys into an array. Consider the following example:
 
-    song {
-	    name "Naked Tongues"
-		artist Perturbator
-	}
+```
+song {
+    name "Naked Tongues"
+    artist Perturbator
+}
 	
-	song {
-	    name "Battle of the Young"
-		artist ZeroCall
-	}
+song {
+    name "Battle of the Young"
+    artist ZeroCall
+}
+```
 
 This will be translated in a semantic analyzing phase to:
 
-    song [
-	    {
-		    name "Naked Tongues"
-			artist Perturbator
-		}
-		{
-		    name "Battle of the Young"
-			artist ZeroCall
-		}
-	]
+```
+song [
+    {
+        name "Naked Tongues"
+        artist Perturbator
+    }
+    {
+        name "Battle of the Young"
+        artist ZeroCall
+    }
+]
+```
 
 And can therefore be accessed like this:
 
-    config.String("song", 0, "name") // Naked Tongues
-    config.String("song", 1, "artist") // ZeroCall
+```go
+config.String("song", 0, "name") // Naked Tongues
+config.String("song", 1, "artist") // ZeroCall
+```
 
 # Traversing non-scalar types
 
@@ -117,54 +129,64 @@ A problem that arises in practice is the need to traverse through non-scalar typ
 
 ### Using traversing functions
 
-    config.TraverseTable(func(key string, value gonf.*Config) {
-	    fmt.Println(key, value)
-	})
+```go
+config.TraverseTable(func(key string, value gonf.*Config) {
+    fmt.Println(key, value)
+})
+```
 
-    config.TraverseArray(func(index int, value gonf.*Config) {
-	    fmt.Println(index, value)
-	})
+```go
+config.TraverseArray(func(index int, value gonf.*Config) {
+    fmt.Println(index, value)
+})
+```
 
 ### Using the underlying data structure
 
-    a := config.Array()
+```go
+a := config.Array()
 	
-	for key, value := range a {
-	    fmt.Println(key, value)
-	}
+for key, value := range a {
+    fmt.Println(key, value)
+}
 
-    t := config.Table()
+t := config.Table()
 
-	for key, value := range t {
-	    fmt.Println(key, value)
-	}
+for key, value := range t {
+    fmt.Println(key, value)
+}
+```
 
 If you need to check which type the Config object holds, you can use the functions:
 
-    config.IsString()
-    config.IsArray()
-    config.IsTable()
+```go
+config.IsString()
+config.IsArray()
+config.IsTable()
+```
 
 # More examples
 
-You are encouraged to see the working examples of tests/gonf_test.go.
+You are encouraged to see the working examples in `tests/gonf_test.go`.
 
 # Help for implementers
 
 Here is the LL(1) grammar:
 
-    pair -> key value pair | &
-    key -> string
-    value -> table | array | string
-    table -> { pair }
-    array -> [ values ]
-    values -> value values | &
-    string -> quoted-string | unquoted-string
-    quoted-string -> " LITERAL "
-    unquoted-string -> SYMBOL
+```
+pair -> key value pair | &
+key -> string
+value -> table | array | string
+table -> { pair }
+array -> [ values ]
+values -> value values | &
+string -> quoted-string | unquoted-string
+quoted-string -> " LITERAL "
+unquoted-string -> SYMBOL
 
-    LITERAL => <ANYTHING SUPPORTED BY THE IMPLEMENTATION>
-    SYMBOL => <NONSPACED-LITERAL>
+LITERAL => <ANYTHING SUPPORTED BY THE IMPLEMENTATION>
+SYMBOL => <NONSPACED-LITERAL>
+```
 
 [the golang string specification](http://golang.org/ref/spec#String_literals)
 
